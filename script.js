@@ -342,6 +342,108 @@ const initCompatibilityChecker = () => {
     });
 };
 
+// Launch Control Indicator functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const launchIndicator = document.querySelector('.launch-indicator');
+    if (launchIndicator) {
+        setInterval(() => {
+            launchIndicator.classList.toggle('active');
+        }, 2000);
+    }
+});
+
+// Coolant value animation
+document.addEventListener('DOMContentLoaded', () => {
+    const coolantValue = document.querySelector('.coolant-value');
+    const coolantBorder = document.querySelector('.coolant-border');
+    const progressFill = document.querySelector('.progress-fill');
+    
+    if (coolantValue && coolantBorder && progressFill) {
+        function animateCoolant() {
+            let startValue = 20;
+            let endValue = 105;
+            let duration = 5000; // 5 seconds
+            let holdDuration = 500; // 0.5 seconds
+            
+            function easeInOutCubic(t) {
+                return t < 0.5
+                    ? 4 * t * t * t
+                    : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+
+            function updateValue(start, end, progress) {
+                const value = Math.round(start + (end - start) * easeInOutCubic(progress));
+                coolantValue.textContent = value;
+                
+                // Update border color based on value
+                if (value < 45) {
+                    coolantBorder.style.borderColor = '#0066ff'; // Blue
+                } else if (value > 90) {
+                    coolantBorder.style.borderColor = '#ff0000'; // Red
+                } else {
+                    coolantBorder.style.borderColor = '#444444'; // Gray
+                }
+
+                // Update progress bar
+                const progressPercent = ((value - 20) / (105 - 20)) * 100;
+                progressFill.style.width = `${progressPercent}%`;
+
+                // Update progress bar color based on percentage
+                if (progressPercent < 30) {
+                    progressFill.style.backgroundColor = '#0066ff'; // Blue
+                } else if (progressPercent > 70) {
+                    progressFill.style.backgroundColor = '#ff0000'; // Red
+                } else {
+                    progressFill.style.backgroundColor = '#00ff00'; // Green
+                }
+            }
+
+            function animate() {
+                // Animate up
+                let startTime = Date.now();
+                function upAnimation() {
+                    let elapsed = Date.now() - startTime;
+                    let progress = Math.min(elapsed / duration, 1);
+                    
+                    updateValue(startValue, endValue, progress);
+                    
+                    if (progress < 1) {
+                        requestAnimationFrame(upAnimation);
+                    } else {
+                        // Hold at max value
+                        setTimeout(() => {
+                            // Animate down
+                            startTime = Date.now();
+                            function downAnimation() {
+                                let elapsed = Date.now() - startTime;
+                                let progress = Math.min(elapsed / duration, 1);
+                                
+                                updateValue(endValue, startValue, progress);
+                                
+                                if (progress < 1) {
+                                    requestAnimationFrame(downAnimation);
+                                } else {
+                                    setTimeout(animate, 0); // Restart animation
+                                }
+                            }
+                            requestAnimationFrame(downAnimation);
+                        }, holdDuration);
+                    }
+                }
+                requestAnimationFrame(upAnimation);
+            }
+            
+            // Initialize progress bar
+            progressFill.style.width = '0%';
+            progressFill.style.backgroundColor = '#0066ff';
+            
+            animate();
+        }
+        
+        animateCoolant();
+    }
+});
+
 // Initialize all functionality
 document.addEventListener('DOMContentLoaded', () => {
     observeFeatures();

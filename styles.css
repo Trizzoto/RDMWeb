@@ -274,11 +274,10 @@ html {
 /* Hero section */
 .hero {
     position: relative;
+    height: 100vh;
     width: 100%;
-    height: calc(84vh - 101px);  /* Increased from 70vh to 84vh (20% increase) */
+    background-color: #ffffff;
     overflow: hidden;
-    margin-top: 24px;
-    background-color: #000;
 }
 
 .hero-background {
@@ -489,6 +488,8 @@ html {
     position: absolute;
     width: 100%;
     text-align: center;
+    top: 295px;
+    left: 140px;
     opacity: 0;
     font-family: 'Fugaz One', cursive;
     font-size: 3.8rem;  /* Slightly larger for the new font */
@@ -518,14 +519,13 @@ html {
     animation: fadeInOutLogo 3.5s ease-in-out forwards;
     animation-delay: 8.2s;
     position: relative;
-    top: -50px;
+    top: 190px;
+    right: -50px;
 }
 
 .hero-logo {
-    width: 250px;  /* Reduced from 300px */
+    width: 210px;  /* Reduced from 300px */
     height: auto;
-    filter: drop-shadow(0 0 20px rgba(0, 0, 0, 0.4))  /* Enhanced shadow */
-           drop-shadow(0 0 10px rgba(255, 255, 255, 0.1));  /* Subtle white glow */
 }
 
 .animated-text {
@@ -803,8 +803,8 @@ footer {
 
 .product-info {
     position: absolute;
-    bottom: 50px;
-    left: 50px;  /* Changed back to fixed left position */
+    bottom: 150px;
+    left: 140px;  /* Changed back to fixed left position */
     transform: none;  /* Removed horizontal centering transform */
     z-index: 4;
     text-align: center;  /* Keep text centering */
@@ -1650,4 +1650,260 @@ body.is-exiting {
     .support-section h2 {
         font-size: 1.5rem;
     }
+}
+
+/* Dashboard Examples Section */
+.dashboard-examples {
+    padding: 4rem 2rem;
+    background-color: #000000;
+}
+
+.dashboard-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
+    gap: 4rem;
+    align-items: center;
+}
+
+.dashboard-elements {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    width: fit-content;
+    margin-left: -30%; /* Move panel left */
+}
+
+.top-elements {
+    display: flex;
+    gap: 2rem;
+    align-items: center;
+    position: relative;  /* Add this */
+}
+
+.dash-element {
+    opacity: 0;
+    transform: translateX(-20px);
+    animation: slideInLeft 0.5s ease-out forwards;
+}
+
+.dash-element:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.dash-element:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+/* Coolant Temperature Box */
+.coolant-box {
+    width: 258px;
+}
+
+.coolant-border {
+    border: 5px solid #444444; /* Increased by 50% from 3.3px */
+    border-radius: 7px;
+    padding: 2px;
+    background-color: #000;
+    height: 149px;
+    display: flex;
+    align-items: flex-start;
+}
+
+.coolant-content {
+    background-color: #000;
+    border-radius: 6px;
+    text-align: center;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem;
+}
+
+.coolant-label {
+    color: #fff;
+    font-family: 'Fugaz One', cursive;
+    font-size: 1.377rem; /* Reduced by 10% from 1.53rem */
+    margin-top: -0.6rem; /* Reduced to move closer to top */
+}
+
+.coolant-value {
+    color: #fff;
+    font-family: 'Manrope', sans-serif;
+    font-weight: 700;
+    font-size: 3.5rem;
+    margin-top: auto;
+    margin-bottom: auto;
+    animation: valueAnimate 10.5s ease-in-out infinite;
+}
+
+@keyframes valueAnimate {
+    0% { 
+        content: '20';
+    }
+    47.6% { /* 5s of 10.5s */
+        content: '105';
+    }
+    52.4% { /* 5.5s of 10.5s */
+        content: '105';
+    }
+    100% { 
+        content: '20';
+    }
+}
+
+.launch-control {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    position: absolute;  /* Add this */
+    left: 350px;        /* Add this - adjust value as needed */
+    top: 30%;           /* Add this */
+    transform: translateY(250%);  /* Add this */
+}
+
+.launch-indicator {
+    width: 15px;
+    height: 15px;
+    border-radius: 50%;
+    background-color: #444444; /* Default gray state */
+}
+
+.launch-label {
+    color: #fff;
+    text-align: center;
+    opacity: 0; /* Hidden by default */
+}
+
+.launch-indicator.active {
+    background-color: #00ff00;
+}
+
+.launch-indicator.active + .launch-label {
+    opacity: 1;
+}
+
+/* Progress Bar */
+.progress-bar {
+    width: 180%; /* Extended by 15% */
+    max-width: none; /* Remove max-width constraint */
+}
+
+.progress-track {
+    width: 100%;
+    height: 40px;
+    background-color: #444444; /* Changed from black to gray */
+    border: 5px solid #444444;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    width: 0%;
+    transition: background-color 0.1s ease;
+}
+
+/* Dashboard Info */
+.dashboard-info {
+    color: #ffffff;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease-out forwards;
+    animation-delay: 0.6s;
+}
+
+.dashboard-info h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+}
+
+.dashboard-info p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #cccccc;
+}
+
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive styles for dashboard section */
+@media (max-width: 768px) {
+    .dashboard-container {
+        grid-template-columns: 1fr;
+        text-align: center;
+    }
+
+    .dashboard-elements {
+        align-items: center;
+    }
+
+    .dashboard-info h2 {
+        font-size: 2rem;
+    }
+}
+
+@keyframes borderColorChange {
+    0% { border-color: #0066ff; }
+    33.33% { border-color: #444444; }
+    66.66% { border-color: #ff0000; }
+    100% { border-color: #0066ff; }
+}
+
+@keyframes valueChange {
+    0% { 
+        content: '20';
+        color: #fff;
+    }
+    20% { 
+        content: '45';
+        color: #fff;
+    }
+    40% { 
+        content: '75';
+        color: #888888;
+    }
+    60% { 
+        content: '90';
+        color: #888888;
+    }
+    80% { 
+        content: '105';
+        color: #ff0000;
+    }
+    100% { 
+        content: '20';
+        color: #fff;
+    }
+}
+
+@keyframes indicatorToggle {
+    0%, 49.99% { background-color: #00ff00; }
+    50%, 100% { background-color: #333333; }
 }
