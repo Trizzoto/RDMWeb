@@ -8,7 +8,7 @@ if (modelContainer) {
     function init() {
         // Create scene
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xFFFFFF);
+        scene.background = new THREE.Color(0xf5f5f5);
 
         // Create camera with wider view
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);

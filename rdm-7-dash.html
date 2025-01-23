@@ -5,15 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RDM-7 Dash | RDM Performance</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
     <div class="loading-overlay">
         <div class="loader"></div>
-    </div>
-    <div class="top-banner">
-        <p>Extra 5% off when you sign up for an account. <a href="#signup">Click here!</a></p>
     </div>
     <header>
         <div class="nav-container">
@@ -22,70 +19,104 @@
                     <img src="rdm-logo.png" alt="RDM - Realtime Data Monitoring" class="logo-img">
                 </a>
             </div>
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <nav>
                 <ul class="nav-links">
-                    <li>
-                        <a href="products.html">Products</a>
-                        <div class="dropdown-menu">
-                            <a href="rdm-7-dash.html">RDM-7 DASH</a>
-                        </div>
-                    </li>
-                    <li><a href="#downloads">Downloads</a></li>
-                    <li><a href="#guide">Product Guide</a></li>
-                    <li><a href="#compatibility">Compatibility</a></li>
-                    <li><a href="#about">About Us</a></li>
+                    <li><a href="products.html">Products</a></li>
+                    <li><a href="downloads.html">Downloads</a></li>
+                    <li><a href="guide.html">Product Guide</a></li>
+                    <li><a href="compatibility.html">Compatibility</a></li>
+                    <li><a href="about-us.html">About Us</a></li>
                 </ul>
             </nav>
         </div>
     </header>
 
-    <main class="product-detail-page">
-        <div class="product-detail-container">
-            <div class="product-gallery">
-                <div class="main-image">
-                    <img src="rdm-7-dash.png" alt="RDM-7 Dash">
-                </div>
-                <div class="thumbnail-gallery">
-                    <!-- Add thumbnail images here -->
-                </div>
-            </div>
-            
-            <div class="product-details">
+    <main class="product-overview">
+        <section class="overview-hero">
+            <div class="hero-content">
                 <h1>RDM-7 Dash</h1>
-                <div class="product-rating">
-                    <span class="stars">★★★★★</span>
-                    <span class="review-count">(12 reviews)</span>
+                <p class="hero-subtitle">Professional Grade Digital Dashboard</p>
+                <div class="price-tag">
+                    <span class="price-label">Pre-order Sale</span>
+                    <span class="price">$499</span>
                 </div>
-                <div class="product-price">
-                    <span class="price">$699.99</span>
-                    <span class="afterpay">or 4 interest-free payments with <img src="path/to/afterpay-logo.png" alt="Afterpay"></span>
-                </div>
+                <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
+            </div>
+            <div class="hero-image">
+                <img src="rdm-7-dash.png" alt="RDM-7 Digital Dashboard">
+            </div>
+        </section>
 
-                <div class="product-options">
-                    <div class="option-group">
-                        <label for="color">Color</label>
-                        <select id="color">
-                            <option value="black">Black</option>
-                            <option value="carbon">Carbon Fiber</option>
-                        </select>
+        <section class="features-grid">
+            <div class="feature-card">
+                <i class="fas fa-tv"></i>
+                <h3>7-inch TFT Display</h3>
+                <p>Crystal clear 800 x 480 resolution display with anti-glare coating for perfect visibility in any lighting condition.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-bolt"></i>
+                <h3>Instant Boot</h3>
+                <p>Embedded system design ensures lightning-fast startup times. Your data is ready when you are.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-microchip"></i>
+                <h3>Custom CAN-bus</h3>
+                <p>Configure custom CAN-bus IDs for seamless integration with any modern ECU system.</p>
+            </div>
+            <div class="feature-card">
+                <i class="fas fa-sliders-h"></i>
+                <h3>Customizable Layout</h3>
+                <p>Personalize your dashboard with drag-and-drop gauge placement and custom warning thresholds.</p>
+            </div>
+        </section>
+
+        <section class="tech-specs">
+            <div class="specs-container">
+                <h2>Technical Specifications</h2>
+                <div class="specs-grid">
+                    <div class="spec-item">
+                        <i class="fas fa-microchip"></i>
+                        <h4>Processing</h4>
+                        <ul>
+                            <li>Embedded ARM Processor</li>
+                            <li>Real-time Data Processing</li>
+                            <li>Instant Boot Technology</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <i class="fas fa-tv"></i>
+                        <h4>Display</h4>
+                        <ul>
+                            <li>7" TFT LCD Screen</li>
+                            <li>800 x 480 Resolution</li>
+                            <li>Anti-glare Coating</li>
+                        </ul>
+                    </div>
+                    <div class="spec-item">
+                        <i class="fas fa-network-wired"></i>
+                        <h4>Connectivity</h4>
+                        <ul>
+                            <li>Dual CAN-bus Channels</li>
+                            <li>Custom CAN ID Support</li>
+                            <li>USB Configuration Port</li>
+                        </ul>
                     </div>
                 </div>
-
-                <button class="add-to-cart-btn">Add to Cart</button>
-
-                <div class="product-description">
-                    <h2>Product Features</h2>
-                    <ul>
-                        <li>High-resolution 7-inch display</li>
-                        <li>Custom RDM Performance interface</li>
-                        <li>Real-time performance monitoring</li>
-                        <li>Customizable gauge layouts</li>
-                        <li>Plug-and-play installation</li>
-                        <li>Compatible with all modern vehicles</li>
-                    </ul>
-                </div>
             </div>
-        </div>
+        </section>
+
+        <section class="cta-section">
+            <div class="cta-content">
+                <h2>Ready to Transform Your Dashboard?</h2>
+                <p>Pre-order now and be among the first to experience the future of vehicle monitoring.</p>
+                <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
+            </div>
+        </section>
     </main>
 
     <footer>
@@ -104,9 +135,9 @@
             <div class="footer-section">
                 <h3>About Us</h3>
                 <ul>
-                    <li><a href="#faq">FAQ</a></li>
-                    <li><a href="#warranty">Warranty</a></li>
-                    <li><a href="#shipping">Shipping & Returns</a></li>
+                    <li><a href="support.html#faq">FAQ</a></li>
+                    <li><a href="support.html#warranty">Warranty</a></li>
+                    <li><a href="support.html#shipping">Shipping & Returns</a></li>
                 </ul>
             </div>
             <div class="footer-section">
