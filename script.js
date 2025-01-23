@@ -11,8 +11,13 @@ if (modelContainer) {
         scene.background = new THREE.Color(0xf5f5f5);
 
         // Create camera with wider view
+        const isMobile = window.innerWidth <= 768;
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
-        camera.position.set(0, 40, 200);
+        if (isMobile) {
+            camera.position.set(0, 25, 160); // Closer position for mobile
+        } else {
+            camera.position.set(0, 40, 200); // Original position for desktop
+        }
         camera.lookAt(0, 40, 0);
 
         // Create renderer
@@ -54,8 +59,9 @@ if (modelContainer) {
                 model = new THREE.Mesh(geometry, material);
                 
                 geometry.center();
-                model.scale.set(0.5, 0.5, 0.5);
-                model.position.y = 20;
+                const scale = isMobile ? 0.35 : 0.5; // Even smaller scale for mobile
+                model.scale.set(scale, scale, scale);
+                model.position.y = isMobile ? 12 : 20; // Lower position for mobile
                 scene.add(model);
             },
             function (xhr) {
@@ -70,7 +76,21 @@ if (modelContainer) {
     }
 
     function onWindowResize() {
+        const isMobile = window.innerWidth <= 768;
         camera.aspect = window.innerWidth / window.innerHeight;
+        if (isMobile) {
+            camera.position.set(0, 30, 180);
+            if (model) {
+                model.scale.set(0.4, 0.4, 0.4);
+                model.position.y = 15;
+            }
+        } else {
+            camera.position.set(0, 40, 200);
+            if (model) {
+                model.scale.set(0.5, 0.5, 0.5);
+                model.position.y = 20;
+            }
+        }
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
