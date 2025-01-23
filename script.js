@@ -8,7 +8,7 @@ if (modelContainer) {
     function init() {
         // Create scene
         scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xffffff);
+        scene.background = new THREE.Color(0xFFFFFF);
 
         // Create camera with wider view
         camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
@@ -21,11 +21,11 @@ if (modelContainer) {
         modelContainer.appendChild(renderer.domElement);
 
         // Basic lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
         scene.add(ambientLight);
 
         const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        directionalLight.position.set(0, 40, 200);
+        directionalLight.position.set(260, 100, 300);
         scene.add(directionalLight);
 
         // Controls setup for smooth rotation
@@ -454,31 +454,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Hamburger menu functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const hamburger = document.querySelector('.hamburger');
-    const navLinks = document.querySelector('.nav-links');
-    const body = document.body;
-
+    const hamburger = document.querySelector('.hamburger-menu');
+    const nav = document.querySelector('nav');
+    
     hamburger.addEventListener('click', () => {
         hamburger.classList.toggle('active');
-        navLinks.classList.toggle('active');
-        body.style.overflow = navLinks.classList.contains('active') ? 'hidden' : '';
+        nav.classList.toggle('active');
     });
 
     // Close menu when clicking outside
     document.addEventListener('click', (e) => {
-        if (!hamburger.contains(e.target) && !navLinks.contains(e.target) && navLinks.classList.contains('active')) {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('active')) {
             hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
-            body.style.overflow = '';
-        }
-    });
-
-    // Close menu when window is resized above mobile breakpoint
-    window.addEventListener('resize', () => {
-        if (window.innerWidth > 768 && navLinks.classList.contains('active')) {
-            hamburger.classList.remove('active');
-            navLinks.classList.remove('active');
-            body.style.overflow = '';
+            nav.classList.remove('active');
         }
     });
 });

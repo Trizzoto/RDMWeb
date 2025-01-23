@@ -46,10 +46,10 @@ body {
 
 /* Top banner styles */
 .top-banner {
-    background-color: #333;
-    color: #fff;
+    background-color: #ff0000;
+    color: #fff2f2;
     text-align: center;
-    padding: 0.5rem;
+    padding: 0.3em;
     font-size: 0.9rem;
     position: fixed;
     top: 0;
@@ -59,21 +59,21 @@ body {
 }
 
 .top-banner a {
-    color: #fff;
+    color: #ffffff;
     text-decoration: underline;
     font-weight: 500;
 }
 
 .top-banner a:hover {
-    color: #007bff;
+    color: #000000;
 }
 
 /* Header scroll behavior */
 header {
-    background-color: #ffffff;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    background-color: #2e2e2e;
+    box-shadow: 0 9px 6px rgba(0, 0, 0, 0.1);
     position: fixed;
-    top: 32px;
+    top: 31px;
     left: 0;
     width: 100%;
     z-index: 1000;
@@ -88,11 +88,11 @@ header.header-hidden {
     width: 100%;
     max-width: none;
     margin: 0 auto;
-    padding: 0.8rem 2rem;  /* Reduced from 1rem */
+    padding: 0.8rem 2rem;
     display: flex;
     position: relative;
-    min-height: 60px;  /* Reduced from 75px */
-    align-items: flex-end;
+    min-height: 60px;
+    align-items: center;
 }
 
 .logo {
@@ -102,18 +102,12 @@ header.header-hidden {
     transform: translateY(-50%);
     display: flex;
     align-items: center;
-    height: 100%;  /* Added to ensure full height container */
-}
-
-.logo a {
-    display: flex;
-    align-items: center;
-    height: 100%;  /* Added to ensure full height */
-    text-decoration: none;
+    height: 100%;
+    z-index: 1002;
 }
 
 .logo-img {
-    height: 52px;  /* Reduced from 65px */
+    height: 52px;
     width: auto;
     display: block;
     margin: auto 0;
@@ -123,15 +117,7 @@ nav {
     width: 100%;
     display: flex;
     justify-content: center;
-    align-items: flex-end;
-    padding-top: 1rem;  /* Reduced from 1.2rem */
-}
-
-.logo a {
-    font-size: 1.5rem;
-    font-weight: bold;
-    text-decoration: none;
-    color: #333;
+    align-items: center;
 }
 
 .nav-links {
@@ -143,45 +129,12 @@ nav {
     align-items: center;
 }
 
-/* Dropdown styles */
-.nav-links li {
-    position: relative;
-}
-
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    left: 0;
-    background: transparent;
-    padding-top: 0.5rem;
-    min-width: 200px;
-    opacity: 0;
-    visibility: hidden;
-    transform: translateY(-10px);
-    transition: all 0.3s ease;
-}
-
-.nav-links li:hover .dropdown-menu {
-    opacity: 1;
-    visibility: visible;
-    transform: translateY(0);
-}
-
-.dropdown-menu a {
-    display: block;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    font-size: 0.8rem;
-    min-width: 160px;
-}
-
-/* Keep the skewed style consistent */
 .nav-links a {
     text-decoration: none;
-    color: #fff;
+    color: #ffffff;
     font-family: 'Fugaz One', cursive;
     font-weight: normal;
-    background-color: #1a1a1a;
+    background-color: #000000;
     padding: 0.28rem 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     text-transform: uppercase;
@@ -196,63 +149,81 @@ nav {
 }
 
 .nav-links a:hover {
-    background-color: #333;
+    background-color: #3a3a3a;
     color: #fff;
     transform: translateY(-2px);
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(32, 32, 32, 0.1);
+}
+
+.hamburger-menu {
+    display: none;
+    position: absolute;
+    right: 2rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem;
+    z-index: 1002;
+}
+
+.hamburger-menu span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background-color: #ffffff;
+    margin: 5px 0;
+    transition: all 0.3s ease;
 }
 
 /* Mobile styles update */
-@media (max-width: 768px) {
-    .dropdown-menu {
-        position: static;
-        padding-top: 0.5rem;
-        opacity: 1;
-        visibility: visible;
-        transform: none;
-        display: none;
-    }
-
-    .nav-links li:hover .dropdown-menu {
+@media (max-width: 1024px) {
+    .hamburger-menu {
         display: block;
     }
 
-    .dropdown-menu a {
-        margin: 0.5rem auto;
+    nav {
+        position: fixed;
+        top: 91px; /* 31px (banner) + 60px (header) */
+        right: -100%;
+        width: 250px;
+        height: calc(100vh - 91px);
+        background-color: #2e2e2e;
+        transition: right 0.3s ease;
+        padding: 2rem 1rem;
     }
 
-    .nav-container {
-        padding-bottom: 0.7rem;  /* Reduced from 0.9rem */
+    nav.active {
+        right: 0;
     }
-    
-    .logo {
-        position: static;
-        margin-bottom: 1rem;
-    }
-    
-    nav {
-        padding-top: 0;
-    }
-    
+
     .nav-links {
-        margin-top: 1rem;
-        gap: 2rem;
+        flex-direction: column;
+        gap: 1rem;
     }
-    
+
+    .nav-links li {
+        width: 100%;
+    }
+
     .nav-links a {
-        padding: 0.35rem 0.9rem;
-        min-width: 90px;
+        width: 100%;
+        display: block;
     }
-    
-    main {
-        padding-top: 101px;  /* Reduced from 126px */
+
+    /* Hamburger menu animation */
+    .hamburger-menu.active span:nth-child(1) {
+        transform: rotate(45deg) translate(5px, 5px);
     }
-    
-    .hero {
-        height: 60vh; /* Reduced height on mobile */
-        min-height: 400px; /* Minimum height to ensure visibility */
-        max-height: 600px; /* Maximum height to prevent overflow */
+
+    .hamburger-menu.active span:nth-child(2) {
+        opacity: 0;
+    }
+
+    .hamburger-menu.active span:nth-child(3) {
+        transform: rotate(-45deg) translate(7px, -7px);
     }
 }
 
@@ -447,100 +418,6 @@ html {
     }
 }
 
-/* Hero text animations */
-@keyframes fadeInOut {
-    0% { opacity: 0; transform: translate(-50%, -30%); }
-    20% { opacity: 1; transform: translate(-50%, -50%); }
-    80% { opacity: 1; transform: translate(-50%, -50%); }
-    100% { opacity: 0; transform: translate(-50%, -70%); }
-}
-
-@keyframes fadeInOutLogo {
-    0% { opacity: 0; transform: scale(0.95); }
-    20% { opacity: 1; transform: scale(1); }
-    80% { opacity: 1; transform: scale(1); }
-    100% { opacity: 0; transform: scale(1.02); }
-}
-
-.animated-text h1 {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    top: 295px;
-    left: 140px;
-    opacity: 0;
-    font-family: 'Fugaz One', cursive;
-    font-size: 3.8rem;  /* Slightly larger for the new font */
-    font-weight: normal;  /* Fugaz One works better with normal weight */
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    letter-spacing: 1px;  /* Added letter spacing for better readability */
-}
-
-.text-1 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 1s;
-}
-
-.text-2 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 3s;
-}
-
-.text-3 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 5s;
-}
-
-.text-1 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 1s;
-}
-
-.text-2 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 3s;
-}
-
-.text-3 {
-    animation: fadeInOut 2.2s ease-in-out forwards;
-    animation-delay: 5s;
-}
-
-.final-logo {
-    opacity: 0;
-    animation: fadeInOutLogo 3.5s ease-in-out forwards;
-    animation-delay: 8.2s;
-    position: relative;
-    top: 190px;
-    right: -50px;
-}
-
-.hero-logo {
-    width: 210px;  /* Reduced from 300px */
-    height: auto;
-}
-
-.animated-text {
-    position: relative;
-    height: 100px;
-}
-
-/* Update responsive styles */
-@media (max-width: 768px) {
-    .animated-text h1 {
-        font-size: 2.2rem;  /* Adjusted for mobile */
-        letter-spacing: 0.5px;
-    }
-    
-    .hero-logo {
-        width: 180px;  /* Reduced from 200px */
-    }
-    
-    .final-logo {
-        top: -30px;  /* Less offset on mobile */
-    }
-}
 
 /* Footer Styles */
 footer {
@@ -796,7 +673,7 @@ footer {
 
 .product-info {
     position: absolute;
-    bottom: 2rem;
+    bottom: 4rem;
     left: 2rem;
     z-index: 4;
     text-align: left;
@@ -805,6 +682,11 @@ footer {
 .product-title {
     color: #ffffff;
     font-family: 'Fugaz One', cursive;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
     font-size: 1.5rem;
     margin-bottom: 0.8rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
