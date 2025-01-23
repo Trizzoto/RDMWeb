@@ -278,6 +278,7 @@ html {
     width: 100%;
     background-color: #ffffff;
     overflow: hidden;
+    z-index: 1;
 }
 
 .hero-background {
@@ -301,50 +302,24 @@ html {
 
 .hero-overlay {
     position: absolute;
-    top: 45%;
-    left: 20%;
+    top: 50%;
+    left: 50%;
     transform: translate(-50%, -50%);
     text-align: center;
-    width: 33.33%;
+    width: 90%;
+    max-width: 1200px;
     z-index: 3;
-    pointer-events: none;  /* Allow interaction with the 3D model behind the overlay */
+    pointer-events: none;
 }
 
-.animated-text {
-    position: relative;
-    height: 250px;  /* Adjusted height */
+.hero-logo {
+    width: clamp(150px, 20vw, 210px);
+    height: auto;
 }
 
-.animated-text h1 {
-    position: absolute;
-    width: 100%;
-    text-align: center;
-    opacity: 0;
-    font-family: 'Fugaz One', cursive;
-    font-size: 2.4rem;  /* Reduced size */
-    font-weight: normal;
-    color: #ffffff;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7),
-                -1px -1px 0 #000,  
-                1px -1px 0 #000,
-                -1px 1px 0 #000,
-                1px 1px 0 #000;  /* Added black outline */
-    letter-spacing: 2px;
-}
-
-/* Update responsive styles */
 @media (max-width: 768px) {
-    .hero {
-        height: calc(59vh - 130px);  /* Increased from 49vh to 59vh (20% increase) */
-    }
-
     .hero-overlay {
-        width: 80%;  /* Wider on mobile */
-        left: 50%;  /* Centered on mobile */
-    }
-
-    .animated-text h1 {
-        font-size: 1.7rem;  /* Smaller on mobile */
+        width: 95%;
     }
 }
 
@@ -471,10 +446,10 @@ html {
 
 /* Hero text animations */
 @keyframes fadeInOut {
-    0% { opacity: 0; transform: translateY(20px); }
-    20% { opacity: 1; transform: translateY(0); }
-    80% { opacity: 1; transform: translateY(0); }
-    100% { opacity: 0; transform: translateY(-20px); }
+    0% { opacity: 0; transform: translate(-50%, -30%); }
+    20% { opacity: 1; transform: translate(-50%, -50%); }
+    80% { opacity: 1; transform: translate(-50%, -50%); }
+    100% { opacity: 0; transform: translate(-50%, -70%); }
 }
 
 @keyframes fadeInOutLogo {
@@ -497,6 +472,21 @@ html {
     color: #ffffff;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
     letter-spacing: 1px;  /* Added letter spacing for better readability */
+}
+
+.text-1 {
+    animation: fadeInOut 2.2s ease-in-out forwards;
+    animation-delay: 1s;
+}
+
+.text-2 {
+    animation: fadeInOut 2.2s ease-in-out forwards;
+    animation-delay: 3s;
+}
+
+.text-3 {
+    animation: fadeInOut 2.2s ease-in-out forwards;
+    animation-delay: 5s;
 }
 
 .text-1 {
@@ -803,21 +793,18 @@ footer {
 
 .product-info {
     position: absolute;
-    bottom: 150px;
-    left: 140px;  /* Changed back to fixed left position */
-    transform: none;  /* Removed horizontal centering transform */
+    bottom: 2rem;
+    left: 2rem;
     z-index: 4;
-    text-align: center;  /* Keep text centering */
-    width: auto;
+    text-align: left;
 }
 
 .product-title {
     color: #ffffff;
     font-family: 'Fugaz One', cursive;
     font-size: 1.5rem;
-    margin-bottom: 0.4rem;
+    margin-bottom: 0.8rem;
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    white-space: nowrap;
 }
 
 .preorder-btn {
@@ -875,13 +862,13 @@ footer {
 
 @media (max-width: 768px) {
     .product-info {
-        left: 20px;  /* Adjusted for mobile */
-        bottom: 30px;
+        bottom: 1.5rem;
+        left: 1.5rem;
     }
 
     .product-title {
-        font-size: 1rem;
-        margin-bottom: 0.3rem;
+        font-size: 1.2rem;
+        margin-bottom: 0.6rem;
     }
 
     .preorder-btn {
@@ -1656,33 +1643,52 @@ body.is-exiting {
 .dashboard-examples {
     padding: 4rem 2rem;
     background-color: #000000;
+    position: relative;
+    z-index: 2;
 }
 
 .dashboard-container {
     max-width: 1200px;
     margin: 0 auto;
-    display: grid;
-    grid-template-columns: 1fr 2fr;
-    gap: 4rem;
-    align-items: center;
+}
+
+/* Dashboard Info */
+.dashboard-info {
+    text-align: center;
+    color: #ffffff;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInUp 0.5s ease-out forwards;
+    max-width: 800px;
+    margin: 0 auto 3rem auto;
+}
+
+.dashboard-info h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 600;
+    font-size: 2.5rem;
+    margin-bottom: 1.5rem;
+    color: #ffffff;
+}
+
+.dashboard-info p {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 1.1rem;
+    line-height: 1.6;
+    color: #cccccc;
 }
 
 .dashboard-elements {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    justify-content: space-between;
     gap: 2rem;
-    width: fit-content;
-    margin-left: -30%; /* Move panel left */
-}
-
-.top-elements {
-    display: flex;
-    gap: 2rem;
-    align-items: center;
-    position: relative;  /* Add this */
+    width: 100%;
+    position: relative;
 }
 
 .dash-element {
+    flex: 1;
     opacity: 0;
     transform: translateX(-20px);
     animation: slideInLeft 0.5s ease-out forwards;
@@ -1690,6 +1696,8 @@ body.is-exiting {
 
 .dash-element:nth-child(2) {
     animation-delay: 0.2s;
+    max-width: 400px;
+    margin: 0 auto;
 }
 
 .dash-element:nth-child(3) {
@@ -1698,11 +1706,13 @@ body.is-exiting {
 
 /* Coolant Temperature Box */
 .coolant-box {
-    width: 258px;
+    width: 100%;
+    max-width: 258px;
+    margin: 0 auto;
 }
 
 .coolant-border {
-    border: 5px solid #444444; /* Increased by 50% from 3.3px */
+    border: 5px solid #444444;
     border-radius: 7px;
     padding: 2px;
     background-color: #000;
@@ -1725,8 +1735,8 @@ body.is-exiting {
 .coolant-label {
     color: #fff;
     font-family: 'Fugaz One', cursive;
-    font-size: 1.377rem; /* Reduced by 10% from 1.53rem */
-    margin-top: -0.6rem; /* Reduced to move closer to top */
+    font-size: 1.377rem;
+    margin-top: -0.6rem;
 }
 
 .coolant-value {
@@ -1743,10 +1753,10 @@ body.is-exiting {
     0% { 
         content: '20';
     }
-    47.6% { /* 5s of 10.5s */
+    47.6% {
         content: '105';
     }
-    52.4% { /* 5.5s of 10.5s */
+    52.4% {
         content: '105';
     }
     100% { 
@@ -1755,27 +1765,28 @@ body.is-exiting {
 }
 
 .launch-control {
+    width: 100%;
+    max-width: 258px;
+    margin: 0 auto;
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: 0.5rem;
-    position: absolute;  /* Add this */
-    left: 350px;        /* Add this - adjust value as needed */
-    top: 30%;           /* Add this */
-    transform: translateY(250%);  /* Add this */
+    height: 149px;
 }
 
 .launch-indicator {
     width: 15px;
     height: 15px;
     border-radius: 50%;
-    background-color: #444444; /* Default gray state */
+    background-color: #444444;
 }
 
 .launch-label {
     color: #fff;
     text-align: center;
-    opacity: 0; /* Hidden by default */
+    opacity: 0;
 }
 
 .launch-indicator.active {
@@ -1788,14 +1799,15 @@ body.is-exiting {
 
 /* Progress Bar */
 .progress-bar {
-    width: 180%; /* Extended by 15% */
-    max-width: none; /* Remove max-width constraint */
+    width: 100%;
+    display: flex;
+    align-items: center;
 }
 
 .progress-track {
     width: 100%;
     height: 40px;
-    background-color: #444444; /* Changed from black to gray */
+    background-color: #444444;
     border: 5px solid #444444;
     border-radius: 6px;
     overflow: hidden;
@@ -1805,30 +1817,6 @@ body.is-exiting {
     height: 100%;
     width: 0%;
     transition: background-color 0.1s ease;
-}
-
-/* Dashboard Info */
-.dashboard-info {
-    color: #ffffff;
-    opacity: 0;
-    transform: translateY(20px);
-    animation: fadeInUp 0.5s ease-out forwards;
-    animation-delay: 0.6s;
-}
-
-.dashboard-info h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 600;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    color: #ffffff;
-}
-
-.dashboard-info p {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 1.1rem;
-    line-height: 1.6;
-    color: #cccccc;
 }
 
 @keyframes slideInLeft {
@@ -1853,19 +1841,31 @@ body.is-exiting {
     }
 }
 
-/* Responsive styles for dashboard section */
 @media (max-width: 768px) {
-    .dashboard-container {
-        grid-template-columns: 1fr;
-        text-align: center;
-    }
-
     .dashboard-elements {
+        flex-direction: column;
         align-items: center;
+        gap: 2rem;
     }
 
-    .dashboard-info h2 {
+    .coolant-box,
+    .launch-control,
+    .progress-bar {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .dash-element:nth-child(2) {
+        margin: 0 auto;
+        order: 3;
+    }
+
+    .support-hero h1 {
         font-size: 2rem;
+    }
+
+    .support-section h2 {
+        font-size: 1.5rem;
     }
 }
 
@@ -1906,4 +1906,24 @@ body.is-exiting {
 @keyframes indicatorToggle {
     0%, 49.99% { background-color: #00ff00; }
     50%, 100% { background-color: #333333; }
+}
+
+@media (max-width: 768px) {
+    .hero {
+        min-height: 100vh;
+        margin-bottom: 0;
+    }
+
+    #model-container {
+        height: 100%;
+    }
+
+    .dashboard-examples {
+        margin-top: 0;
+        padding-top: 2rem;
+    }
+
+    .dashboard-info {
+        padding-top: 1rem;
+    }
 }
