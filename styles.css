@@ -250,7 +250,9 @@ nav {
     }
     
     .hero {
-        height: calc(59vh - 130px);  /* Increased from 49vh to 59vh (20% increase) */
+        height: 60vh; /* Reduced height on mobile */
+        min-height: 400px; /* Minimum height to ensure visibility */
+        max-height: 600px; /* Maximum height to prevent overflow */
     }
 }
 
@@ -294,6 +296,7 @@ html {
     width: 100%;
     height: 100%;
     cursor: grab;
+    touch-action: none; /* Prevents default touch behaviors */
 }
 
 #model-container:active {
@@ -1741,6 +1744,7 @@ body.is-exiting {
 
 .coolant-value {
     color: #fff;
+    
     font-family: 'Manrope', sans-serif;
     font-weight: 700;
     font-size: 3.5rem;
