@@ -133,7 +133,7 @@ nav {
 }
 
 .hamburger-menu {
-    display: none;
+        display: none;
     position: absolute;
     right: 2rem;
     top: 50%;
@@ -146,7 +146,7 @@ nav {
 }
 
 .hamburger-menu span {
-    display: block;
+        display: block;
     width: 24px;
     height: 2px;
     background-color: #ffffff;
@@ -183,7 +183,7 @@ nav {
     .nav-links li {
         width: 100%;
     }
-
+    
     .nav-links a {
         width: 100%;
         display: block;

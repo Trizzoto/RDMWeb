@@ -1,110 +1,284 @@
-// Check if we're on the home page
+// Get the container element
 const modelContainer = document.getElementById('model-container');
 
-// Only initialize Three.js if we're on the home page
-if (modelContainer) {
-    let scene, camera, renderer, controls, model;
+// Initialize Three.js variables
+let scene, camera, renderer, model, controls;
+// Keep texture parameters but remove controls
+const textureParams = {
+    rotation: 27,
+    scaleX: 200,
+    scaleY: 200,
+    offsetX: 34,
+    offsetY: -96,
+    centerX: 1.4,
+    centerY: 1.4,
+    stretchX: 0.7,
+    stretchY: 1.0,
+    skewX: 0,
+    skewY: -5,
+    opacity: 1.0,
+    normalThreshold: -0.8
+};
 
-    function init() {
-        // Create scene
-        scene = new THREE.Scene();
-        scene.background = new THREE.Color(0xf5f5f5);
+// Add camera parameters
+let cameraParams = {
+    posX: 376.34,
+    posY: 78.18,
+    posZ: -319.78,
+    targetX: 0,
+    targetY: 0,
+    targetZ: 0
+};
 
-        // Create camera with wider view
-        const isMobile = window.innerWidth <= 768;
-        camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 5000);
-        if (isMobile) {
-            camera.position.set(0, 25, 160); // Closer position for mobile
-        } else {
-            camera.position.set(0, 40, 200); // Original position for desktop
-        }
-        camera.lookAt(0, 40, 0);
+// Add model rotation parameters
+let modelParams = {
+    rotationX: 57 * Math.PI / 180,    // 57 degrees
+    rotationY: -43 * Math.PI / 180,   // -43 degrees
+    rotationZ: -169 * Math.PI / 180   // -169 degrees
+};
 
-        // Create renderer
-        renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        modelContainer.appendChild(renderer.domElement);
+function init() {
+    // Scene setup
+    scene = new THREE.Scene();
+    scene.background = new THREE.Color(0xf5f5f5);
 
-        // Basic lighting
-        const ambientLight = new THREE.AmbientLight(0xffffff, 0.3);
-        scene.add(ambientLight);
+    // Camera setup
+    camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
 
-        const directionalLight = new THREE.DirectionalLight(0xffffff, 0.7);
-        directionalLight.position.set(260, 100, 300);
-        scene.add(directionalLight);
+    // Renderer setup
+    renderer = new THREE.WebGLRenderer({ antialias: true });
+    renderer.setSize(window.innerWidth, window.innerHeight);
+    modelContainer.appendChild(renderer.domElement);
 
-        // Controls setup for smooth rotation
-        controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.07;
-        controls.enableZoom = false;
-        controls.enablePan = false;
-        controls.enableRotate = true;
-        controls.rotateSpeed = 1.0;
-        controls.autoRotate = true;
-        controls.autoRotateSpeed = 2.0;
-        controls.enabled = true;
+    // Add OrbitControls with enhanced settings for horizontal rotation
+    controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true;
+    controls.dampingFactor = 0.05;
+    controls.screenSpacePanning = false;
+    controls.minDistance = 100;
+    controls.maxDistance = 500;
+    
+    // Restrict movement to maintain the correct viewing angle
+    controls.minPolarAngle = Math.PI / 3;    // Limit upward rotation
+    controls.maxPolarAngle = Math.PI / 2.2;  // Limit downward rotation
+    controls.enableZoom = true;              // Allow zoom
+    controls.enablePan = false;              // Disable panning
+    controls.autoRotate = true;              // Enable auto-rotation
+    controls.autoRotateSpeed = 1.2;          // Increased rotation speed to 1.2
 
-        // Load STL Model
-        const loader = new THREE.STLLoader();
-        loader.load(
-            'stl_case.stl',
-            function (geometry) {
-                const material = new THREE.MeshStandardMaterial({
-                    color: 0xcccccc,
-                    metalness: 0.2,
-                    roughness: 0.7,
-                    flatShading: true
-                });
-                model = new THREE.Mesh(geometry, material);
-                
-                geometry.center();
-                const scale = isMobile ? 0.35 : 0.5; // Even smaller scale for mobile
-                model.scale.set(scale, scale, scale);
-                model.position.y = isMobile ? 12 : 20; // Lower position for mobile
-                scene.add(model);
-            },
-            function (xhr) {
-                console.log((xhr.loaded / xhr.total * 100) + '% loaded');
-            },
-            function (error) {
-                console.error('Error loading STL:', error);
-            }
+    // Enhanced lighting setup
+    // Ambient light for overall illumination
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8)); // Increased ambient intensity
+    
+    // Main front light
+    const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    frontLight.position.set(0, 0, 300); // Positioned directly in front
+    scene.add(frontLight);
+
+    // Additional front lights for better coverage
+    const frontLeftLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    frontLeftLight.position.set(-200, 0, 200);
+    scene.add(frontLeftLight);
+
+    const frontRightLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    frontRightLight.position.set(200, 0, 200);
+    scene.add(frontRightLight);
+
+    // Top light for better surface definition
+    const topLight = new THREE.DirectionalLight(0xffffff, 0.6);
+    topLight.position.set(0, 200, 100);
+    scene.add(topLight);
+
+    // Fill light from bottom
+    const bottomLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    bottomLight.position.set(0, -100, 100);
+    scene.add(bottomLight);
+
+    // Load texture and model
+    const textureLoader = new THREE.TextureLoader();
+    const stlLoader = new THREE.STLLoader();
+    
+    Promise.all([
+        new Promise(resolve => {
+            textureLoader.load('dashboard-texture.png', texture => {
+                texture.encoding = THREE.sRGBEncoding;
+                texture.flipY = false;
+                texture.rotation = (textureParams.rotation * Math.PI) / 180;
+                texture.center.set(textureParams.centerX, textureParams.centerY);
+                texture.repeat.set(textureParams.stretchX, textureParams.stretchY);
+                texture.offset.set(0, 0);
+                // Enhance texture quality
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.minFilter = THREE.NearestMipmapLinearFilter;
+                texture.magFilter = THREE.NearestFilter;
+                texture.generateMipmaps = true;
+                texture.needsUpdate = true;
+                resolve(texture);
+            });
+        }),
+        new Promise(resolve => {
+            stlLoader.load('stl_case.stl', geometry => {
+                resolve(geometry);
+            });
+        })
+    ]).then(([texture, geometry]) => {
+        createModel(geometry, texture);
+    });
+
+    animate();
+}
+
+function createModel(geometry, texture) {
+    geometry.computeVertexNormals();
+    const positionAttribute = geometry.getAttribute('position');
+    const normalAttribute = geometry.getAttribute('normal');
+    
+    // Calculate face dimensions for proper scaling
+    let minX = Infinity, maxX = -Infinity;
+    let minY = Infinity, maxY = -Infinity;
+    
+    for (let i = 0; i < positionAttribute.count; i += 3) {
+        const normal = new THREE.Vector3(
+            normalAttribute.getX(i),
+            normalAttribute.getY(i),
+            normalAttribute.getZ(i)
         );
-
-        window.addEventListener('resize', onWindowResize, false);
-    }
-
-    function onWindowResize() {
-        const isMobile = window.innerWidth <= 768;
-        camera.aspect = window.innerWidth / window.innerHeight;
-        if (isMobile) {
-            camera.position.set(0, 30, 180);
-            if (model) {
-                model.scale.set(0.4, 0.4, 0.4);
-                model.position.y = 15;
-            }
-        } else {
-            camera.position.set(0, 40, 200);
-            if (model) {
-                model.scale.set(0.5, 0.5, 0.5);
-                model.position.y = 20;
+        
+        if (normal.z < textureParams.normalThreshold) {
+            for (let j = 0; j < 3; j++) {
+                const x = positionAttribute.getX(i + j);
+                const y = positionAttribute.getY(i + j);
+                minX = Math.min(minX, x);
+                maxX = Math.max(maxX, x);
+                minY = Math.min(minY, y);
+                maxY = Math.max(maxY, y);
             }
         }
+    }
+    
+    const faceWidth = maxX - minX;
+    const faceHeight = maxY - minY;
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+    
+    const uvs = new Float32Array(positionAttribute.count * 2);
+    
+    for (let i = 0; i < positionAttribute.count; i += 3) {
+        const normal = new THREE.Vector3(
+            normalAttribute.getX(i),
+            normalAttribute.getY(i),
+            normalAttribute.getZ(i)
+        );
+        
+        if (normal.z < textureParams.normalThreshold) {
+            for (let j = 0; j < 3; j++) {
+                const x = positionAttribute.getX(i + j);
+                const y = positionAttribute.getY(i + j);
+                
+                let u = (x - centerX) / (faceWidth / 2);
+                let v = (y - centerY) / (faceHeight / 2);
+                
+                u *= textureParams.scaleX / 100;
+                v *= textureParams.scaleY / 100;
+                
+                const skewX = textureParams.skewX / 25;
+                const skewY = textureParams.skewY / 25;
+                const oldU = u;
+                u += v * skewX;
+                v += oldU * skewY;
+                
+                u += textureParams.offsetX / 100;
+                v += textureParams.offsetY / 100;
+                
+                u = (u + 1) / 2;
+                v = (v + 1) / 2;
+                
+                uvs[(i + j) * 2] = u;
+                uvs[(i + j) * 2 + 1] = v;
+            }
+        }
+    }
+    
+    geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
+    geometry.attributes.uv.needsUpdate = true;
+    
+    const material = new THREE.MeshStandardMaterial({
+        color: 0xffffff,
+        map: texture,
+        metalness: 0.0,
+        roughness: 0.2,
+        opacity: textureParams.opacity,
+        transparent: textureParams.opacity < 1.0,
+        envMapIntensity: 0.8,
+        flatShading: false,
+    });
+    
+    // Improve geometry quality
+    geometry.computeTangents();
+    geometry.attributes.position.setUsage(THREE.StaticDrawUsage);
+    geometry.attributes.normal.setUsage(THREE.StaticDrawUsage);
+    geometry.attributes.uv.setUsage(THREE.StaticDrawUsage);
+    
+    model = new THREE.Mesh(geometry, material);
+    
+    // Center the geometry itself first
+    geometry.center();
+    
+    // Calculate bounding box for scaling
+    const box = new THREE.Box3().setFromObject(model);
+    const size = box.getSize(new THREE.Vector3());
+    const maxDim = Math.max(size.x, size.y, size.z);
+    const scale = 200 / maxDim; // Scale to reasonable size
+    model.scale.multiplyScalar(scale);
+    
+    // Set initial rotation using modelParams
+    model.rotation.set(
+        modelParams.rotationX,
+        modelParams.rotationY,
+        modelParams.rotationZ
+    );
+    
+    scene.add(model);
+    
+    // Set camera to initial position
+    camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
+    
+    // Update controls target and refresh
+    controls.target.set(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
+    controls.update();
+    
+    // Remove loading overlay
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('fade-out');
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 500);
+    }
+}
+
+function animate() {
+    requestAnimationFrame(animate);
+    if (renderer && scene && camera) {
+        controls.update(); // Required for auto-rotation
+        renderer.render(scene, camera);
+    }
+}
+
+// Handle window resize
+window.addEventListener('resize', () => {
+    if (camera && renderer) {
+        camera.aspect = window.innerWidth / window.innerHeight;
         camera.updateProjectionMatrix();
         renderer.setSize(window.innerWidth, window.innerHeight);
     }
+});
 
-    function animate() {
-        requestAnimationFrame(animate);
-        controls.update();
-        renderer.render(scene, camera);
-    }
-
-    // Initialize the scene
-    init();
-    animate();
-}
+// Initialize everything when the DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
 
 // Loading animation
 document.addEventListener('DOMContentLoaded', () => {
