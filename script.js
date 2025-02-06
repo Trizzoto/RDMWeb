@@ -40,7 +40,7 @@ let modelParams = {
 function init() {
     // Scene setup
     scene = new THREE.Scene();
-    scene.background = new THREE.Color(0xf5f5f5);
+    scene.background = new THREE.Color(0xcdcdcd);
 
     // Camera setup
     camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -60,41 +60,59 @@ function init() {
     controls.minDistance = 100;
     controls.maxDistance = 500;
     
-    // Restrict movement to maintain the correct viewing angle
-    controls.minPolarAngle = Math.PI / 3;    // Limit upward rotation
-    controls.maxPolarAngle = Math.PI / 2.2;  // Limit downward rotation
-    controls.enableZoom = true;              // Allow zoom
+    // Check if on mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // Lock vertical rotation on mobile
+        controls.minPolarAngle = Math.PI / 2.2;    // Lock to bottom position
+        controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
+        controls.enableZoom = false;               // Disable zoom on mobile
+    } else {
+        // Desktop settings
+        controls.minPolarAngle = Math.PI / 3;      // Limit upward rotation
+        controls.maxPolarAngle = Math.PI / 2.2;    // Limit downward rotation
+        controls.enableZoom = true;                // Allow zoom on desktop
+    }
+    
     controls.enablePan = false;              // Disable panning
     controls.autoRotate = true;              // Enable auto-rotation
-    controls.autoRotateSpeed = 1.2;          // Increased rotation speed to 1.2
+    controls.autoRotateSpeed = 1.2;          // Rotation speed
 
     // Enhanced lighting setup
     // Ambient light for overall illumination
-    scene.add(new THREE.AmbientLight(0xffffff, 0.8)); // Increased ambient intensity
+    scene.add(new THREE.AmbientLight(0xffffff, 1.2)); // Increased ambient for better overall illumination
     
     // Main front light
     const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
     frontLight.position.set(0, 0, 300); // Positioned directly in front
     scene.add(frontLight);
 
-    // Additional front lights for better coverage
-    const frontLeftLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    frontLeftLight.position.set(-200, 0, 200);
-    scene.add(frontLeftLight);
-
-    const frontRightLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    frontRightLight.position.set(200, 0, 200);
-    scene.add(frontRightLight);
-
-    // Top light for better surface definition
-    const topLight = new THREE.DirectionalLight(0xffffff, 0.6);
-    topLight.position.set(0, 200, 100);
+    // Strong top-down light
+    const topLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    topLight.position.set(0, 300, 0);  // Directly above
+    topLight.lookAt(0, 0, 0);
     scene.add(topLight);
 
-    // Fill light from bottom
-    const bottomLight = new THREE.DirectionalLight(0xffffff, 0.3);
-    bottomLight.position.set(0, -100, 100);
+    // Bottom up-light
+    const bottomLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    bottomLight.position.set(0, -300, 0);  // Directly below
+    bottomLight.lookAt(0, 0, 0);
     scene.add(bottomLight);
+
+    // Back light for visibility
+    const backLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    backLight.position.set(0, 0, -300);  // Directly behind
+    scene.add(backLight);
+
+    // Back side lights for better edge definition
+    const backLeftLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    backLeftLight.position.set(-200, 0, -200);
+    scene.add(backLeftLight);
+
+    const backRightLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    backRightLight.position.set(200, 0, -200);
+    scene.add(backRightLight);
 
     // Load texture and model
     const textureLoader = new THREE.TextureLoader();
@@ -109,11 +127,12 @@ function init() {
                 texture.center.set(textureParams.centerX, textureParams.centerY);
                 texture.repeat.set(textureParams.stretchX, textureParams.stretchY);
                 texture.offset.set(0, 0);
-                // Enhance texture quality
+                // Enhanced texture quality settings
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                texture.minFilter = THREE.NearestMipmapLinearFilter;
-                texture.magFilter = THREE.NearestFilter;
+                texture.minFilter = THREE.LinearMipMapLinearFilter;  // Trilinear filtering
+                texture.magFilter = THREE.LinearFilter;              // Bilinear filtering
                 texture.generateMipmaps = true;
+                texture.premultiplyAlpha = true;                    // Better alpha handling
                 texture.needsUpdate = true;
                 resolve(texture);
             });
@@ -204,15 +223,14 @@ function createModel(geometry, texture) {
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
     geometry.attributes.uv.needsUpdate = true;
     
-    const material = new THREE.MeshStandardMaterial({
+    const material = new THREE.MeshLambertMaterial({
         color: 0xffffff,
         map: texture,
-        metalness: 0.0,
-        roughness: 0.2,
-        opacity: textureParams.opacity,
         transparent: textureParams.opacity < 1.0,
-        envMapIntensity: 0.8,
-        flatShading: false,
+        opacity: textureParams.opacity,
+        emissive: 0x000000,
+        reflectivity: 0,
+        alphaTest: 0.1,           // Helps with texture edges
     });
     
     // Improve geometry quality

@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Product Guide | RDM Performance</title>
+    <title>Development Product Guide | RDM Performance</title>
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -30,7 +30,7 @@
                         <a href="products.html">Products</a>
                     </li>
                     <li><a href="downloads.html">Downloads</a></li>
-                    <li><a href="guide.html">Product Guide</a></li>
+                    <li><a href="guide.html">Development Product Guide</a></li>
                     <li><a href="compatibility.html">Compatibility</a></li>
                     <li><a href="about-us.html">About Us</a></li>
                 </ul>
@@ -40,8 +40,8 @@
 
     <main class="guide-page">
         <section class="guide-hero">
-            <h1>Product Guide</h1>
-            <p>Everything you need to know about your RDM products</p>
+            <h1>Development Product Guide</h1>
+            <p>Everything you need to know about your RDM development product</p>
         </section>
 
         <section class="guide-content">
@@ -49,7 +49,7 @@
                 <ul>
                     <li><a href="#getting-started" class="active">Getting Started</a></li>
                     <li><a href="#installation">Installation</a></li>
-                    <li><a href="#configuration">Configuration</a></li>
+                    <li><a href="#how-to-operate">How to Operate</a></li>
                     <li><a href="#troubleshooting">Troubleshooting</a></li>
                     <li><a href="#faq">FAQ</a></li>
                 </ul>
@@ -59,60 +59,115 @@
                 <section id="getting-started" class="guide-section">
                     <h2>Getting Started</h2>
                     <div class="guide-step">
-                        <h3>1. Unboxing Your RDM-7 DASH</h3>
-                        <p>Your package should include:</p>
-                        <ul>
-                            <li>RDM-7 DASH Display Unit</li>
-                            <li>Mounting Bracket</li>
-                            <li>Power Cable</li>
-                            <li>OBD-II Connection Cable</li>
-                            <li>Quick Start Guide</li>
-                        </ul>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <h3>1. Unboxing Your RDM-7 Dashboard</h3>
+                                <p>Your package should include:</p>
+                                <ul>
+                                    <li>RDM-7 Dashboard</li>
+                                    <li>2.5m Power and Ground cable</li>
+                                    <li>6 pin Deutsch connector and terminating pins</li>
+                                    <li>USB-C connection cable (For redundancy troubleshooting)</li>
+                                    <li>7.5amp inline fuse if using un-fused power supply</li>
+                                    <li>Dashboard unit/mounting dimensions</li>
+                                </ul>
+                            </div>
+                            <div class="image-container">
+                                <img src="Print-display.png" alt="RDM-7 Dashboard Package Contents" class="guide-img package-img">
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 <section id="installation" class="guide-section">
                     <h2>Installation</h2>
                     <div class="guide-step">
-                        <h3>Mounting Options</h3>
-                        <p>The RDM-7 DASH can be mounted in several ways:</p>
-                        <ul>
-                            <li>Dashboard Mount (Recommended)</li>
-                            <li>A-Pillar Mount</li>
-                            <li>Custom Mount</li>
-                        </ul>
-                        <div class="installation-video">
-                            <iframe src="about:blank" title="Installation Guide"></iframe>
+                        <h3>Wiring Installation</h3>
+                        <div class="warning-note">
+                            <p><strong>Important:</strong> Always ensure battery is DISCONNECTED when making any wiring connections.</p>
+                        </div>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <p>Follow these steps to properly wire your RDM-7 Dashboard:</p>
+                                <ul>
+                                    <li><strong>Power Connection (Red Wire)</strong>
+                                        <ul>
+                                            <li>Connect to ignition-switched 12V power source</li>
+                                            <li>Use provided 7.5amp inline fuse if power source is not already fused</li>
+                                        </ul>
+                                    </li>
+                                    <li><strong>Ground Connection (Black Wire)</strong>
+                                    </li>
+                                    <li><strong>CAN Bus Connections</strong>
+                                        <ul>
+                                            <li>CAN High (Brown Wire) - Connect to vehicle's CAN High</li>
+                                            <li>CAN Low (Grey Wire) - Connect to vehicle's CAN Low</li>
+                                            <li>Maintain twisted pair configuration for noise reduction</li>
+                                        </ul>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="image-container">
+                                <img src="deutsch_connector_6pin_diagram.svg" alt="RDM-7 Dashboard 6-Pin Deutsch Connector Wiring Diagram" class="guide-img">
+                            </div>
+                        </div>
+                        <div class="warning-note full-width">
+                            <p><strong>CAN Bus Termination:</strong> The RDM-7 Dashboard includes an integrated 120Ω termination resistor. For optimal network performance, we recommend positioning the display at the terminating end of your CAN bus network. If your installation requires removal of the termination resistor, this modification can be performed on the display's circuit board. Please contact our technical support team for detailed guidance on this procedure.</p>
                         </div>
                     </div>
                 </section>
 
-                <section id="configuration" class="guide-section">
-                    <h2>Configuration</h2>
+                <section id="how-to-operate" class="guide-section">
+                    <h2>How to Operate</h2>
                     <div class="guide-step">
-                        <h3>Initial Setup</h3>
-                        <p>Follow these steps to configure your RDM-7 DASH:</p>
-                        <ol>
-                            <li>Power on your device</li>
-                            <li>Connect to your vehicle's OBD-II port</li>
-                            <li>Select your vehicle make and model</li>
-                            <li>Choose your preferred display layout</li>
-                            <li>Calibrate your sensors</li>
-                        </ol>
+                        <div class="content-with-image">
+                            <div class="text-content">
+                                <h3>Initial Setup and Operation</h3>
+                                <p>After installation, complete these setup steps:</p>
+                                <ol>
+                                    <li>Power up the system with ignition</li>
+                                    <li>Verify all connections are secure</li>
+                                    <li>Check for proper CAN bus communication</li>
+                                    <li>Configure display settings</li>
+                                    <li>Test all dashboard functions</li>
+                                </ol>
+                            </div>
+                            <div class="image-container">
+                                <img src="placeholder-setup.jpg" alt="RDM-7 Dashboard Setup Process" class="guide-img">
+                            </div>
+                        </div>
                     </div>
                 </section>
 
                 <section id="troubleshooting" class="guide-section">
                     <h2>Troubleshooting</h2>
                     <div class="guide-step">
-                        <h3>Common Issues</h3>
-                        <div class="troubleshooting-item">
-                            <h4>Display Not Powering On</h4>
-                            <p>Check power connections and fuse. Ensure proper voltage is being supplied.</p>
-                        </div>
-                        <div class="troubleshooting-item">
-                            <h4>No Data Reading</h4>
-                            <p>Verify OBD-II connection and vehicle compatibility. Restart the device if necessary.</p>
+                        <h3>Common Installation Issues</h3>
+                        <div class="troubleshooting-grid">
+                            <div class="troubleshooting-item">
+                                <h4>Display Not Powering On</h4>
+                                <ul>
+                                    <li>Check ignition power connection</li>
+                                    <li>Verify ground connection</li>
+                                    <li>Test inline fuse continuity</li>
+                                    <li>Measure voltage at power input</li>
+                                </ul>
+                                <div class="image-container">
+                                    <img src="placeholder-power-troubleshoot.jpg" alt="Power Troubleshooting Guide" class="guide-img">
+                                </div>
+                            </div>
+                            <div class="troubleshooting-item">
+                                <h4>No CAN Communication</h4>
+                                <ul>
+                                    <li>Verify CAN High and Low connections</li>
+                                    <li>Check for reversed CAN wires</li>
+                                    <li>Ensure proper CAN bus termination</li>
+                                    <li>Use USB-C connection for diagnostics</li>
+                                </ul>
+                                <div class="image-container">
+                                    <img src="placeholder-can-troubleshoot.jpg" alt="CAN Troubleshooting Guide" class="guide-img">
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -121,12 +176,16 @@
                     <h2>Frequently Asked Questions</h2>
                     <div class="faq-list">
                         <div class="faq-item">
-                            <h3>Is my vehicle compatible?</h3>
-                            <p>RDM-7 DASH is compatible with most vehicles from 2008 and newer. Check our compatibility page for specific models.</p>
+                            <h3>What vehicles are compatible with the RDM-7 Dashboard?</h3>
+                            <p>The RDM-7 Dashboard is compatible with most modern vehicles equipped with CAN bus systems. Check our compatibility checker for specific vehicle models.</p>
                         </div>
                         <div class="faq-item">
-                            <h3>Can I customize the display layout?</h3>
-                            <p>Yes, the RDM-7 DASH offers fully customizable layouts with drag-and-drop functionality.</p>
+                            <h3>Can I install the dashboard myself?</h3>
+                            <p>Yes, the RDM-7 Dashboard is designed for DIY installation. Follow our comprehensive installation guide and wiring diagrams for proper setup.</p>
+                        </div>
+                        <div class="faq-item">
+                            <h3>What if my vehicle doesn't have CAN bus?</h3>
+                            <p>Please contact our support team for alternative solutions and adapters that might be available for your specific vehicle.</p>
                         </div>
                     </div>
                 </section>
@@ -167,5 +226,119 @@
     </footer>
 
     <script src="script.js"></script>
+
+    <style>
+        .content-with-image {
+            position: relative;
+            margin: 2rem 0;
+        }
+
+        .text-content {
+            margin-right: 40%;
+        }
+
+        .image-container {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 35%;
+            max-width: 400px;
+        }
+
+        .guide-img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .package-img {
+            max-height: 300px;
+            object-fit: contain;
+            width: 100%;
+        }
+
+        .full-width-img {
+            width: 100%;
+            max-height: 400px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin: 2rem 0;
+        }
+
+        .guide-section {
+            margin: 4rem 0;
+            padding: 2rem;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            position: relative;
+        }
+
+        .warning-note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+
+        .warning-note.full-width {
+            margin-left: -2rem;
+            margin-right: -2rem;
+            border-radius: 0;
+            border-left: none;
+            border-width: 1px 0;
+            background: #fff3cd;
+            padding: 1rem 2rem;
+            position: relative;
+        }
+
+        .warning-note.full-width::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background-color: #ffc107;
+        }
+
+        .troubleshooting-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .faq-list {
+            display: grid;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .faq-item {
+            background: #f8f9fa;
+            padding: 1.5rem;
+            border-radius: 8px;
+        }
+
+        @media (max-width: 768px) {
+            .content-with-image {
+                position: static;
+            }
+
+            .text-content {
+                margin-right: 0;
+            }
+
+            .image-container {
+                position: static;
+                width: 100%;
+                max-width: 100%;
+                margin: 1rem 0;
+            }
+        }
+    </style>
 </body>
 </html> 
