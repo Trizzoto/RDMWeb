@@ -760,36 +760,17 @@ const initCarousel = () => {
         }
     });
 
-    // Adjust 3D model size for mobile - using 1.5x instead of 2x
+    // Adjust 3D model size for mobile
     if (window.innerWidth <= 768) {  // Mobile breakpoint
-        camera.position.z *= 1.5;  // Move camera back to zoom out (halfway between original and previous adjustment)
-        // OR if using FOV adjustment:
-        camera.fov = 60;  // Adjust FOV to be between original (45) and previous (75)
+        camera.position.z *= 1.5;  // Move camera back to zoom out
         camera.updateProjectionMatrix();
-
-        // Enable pinch zoom
-        const mc = new Hammer(renderer.domElement);
-        mc.get('pinch').set({ enable: true });
         
-        let initialScale = 1;
-        
-        mc.on('pinchstart', function(e) {
-            initialScale = camera.position.z;
-        });
-        
-        mc.on('pinch', function(e) {
-            // Adjust these values to control zoom sensitivity
-            const minZoom = camera.position.z / 2;  // Maximum zoom in
-            const maxZoom = camera.position.z * 2;  // Maximum zoom out
-            
-            let newZ = initialScale / e.scale;
-            
-            // Clamp the zoom level
-            newZ = Math.max(minZoom, Math.min(maxZoom, newZ));
-            
-            camera.position.z = newZ;
-            camera.updateProjectionMatrix();
-        });
+        // Remove all pinch and zoom functionality
+        if (controls) {
+            controls.enableZoom = false;  // Disable zoom completely
+            controls.enablePinch = false; // Disable pinch
+            controls.touches = { ONE: THREE.TOUCH.ROTATE }; // Only allow rotation
+        }
     }
 
     // Initialize the carousel
