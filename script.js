@@ -760,35 +760,12 @@ const initCarousel = () => {
         }
     });
 
-    // Add touch swipe support
-    let touchStartX = 0;
-    let touchEndX = 0;
-
-    const carouselContainer = document.querySelector('.carousel-container');
-    if (carouselContainer) {
-        carouselContainer.addEventListener('touchstart', (e) => {
-            if (isTransitioning) return;
-            touchStartX = e.touches[0].clientX;
-        });
-
-        carouselContainer.addEventListener('touchend', (e) => {
-            if (isTransitioning) return;
-            touchEndX = e.changedTouches[0].clientX;
-            handleSwipe();
-        });
-    }
-
-    function handleSwipe() {
-        const swipeThreshold = 50;
-        const swipeDistance = touchEndX - touchStartX;
-
-        if (Math.abs(swipeDistance) > swipeThreshold) {
-            if (swipeDistance > 0) {
-                prevSlide();
-            } else {
-                nextSlide();
-            }
-        }
+    // Add mobile-specific camera adjustments for the 3D model
+    if (window.innerWidth <= 768) {  // Mobile breakpoint
+        camera.position.z *= 2;  // Move camera back to zoom out
+        // OR adjust the camera's field of view
+        camera.fov = 75;  // Increase FOV to show more of the model
+        camera.updateProjectionMatrix();
     }
 
     // Initialize the carousel
