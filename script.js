@@ -1,93 +1,41 @@
-// Global variables and parameters
+// Get the container element
 const modelContainer = document.getElementById('model-container');
-let scene, camera, renderer, model, controls;
 
-// Consolidated parameters
-const params = {
-    texture: {
-        rotation: 27,
-        scaleX: 200,
-        scaleY: 200,
-        offsetX: 34,
-        offsetY: -96,
-        centerX: 1.4,
-        centerY: 1.4,
-        stretchX: 0.7,
-        stretchY: 1.0,
-        skewX: 0,
-        skewY: -5,
-        opacity: 1.0,
-        normalThreshold: -0.8
-    },
-    camera: {
-        posX: 376.34,
-        posY: 78.18,
-        posZ: -319.78,
-        targetX: 0,
-        targetY: 0,
-        targetZ: 0,
-        fov: 25
-    },
-    model: {
-        rotationX: 57 * Math.PI / 180,
-        rotationY: -43 * Math.PI / 180,
-        rotationZ: -169 * Math.PI / 180
-    }
+// Initialize Three.js variables
+let scene, camera, renderer, model, controls;
+// Keep texture parameters but remove controls
+const textureParams = {
+    rotation: 27,
+    scaleX: 200,
+    scaleY: 200,
+    offsetX: 34,
+    offsetY: -96,
+    centerX: 1.4,
+    centerY: 1.4,
+    stretchX: 0.7,
+    stretchY: 1.0,
+    skewX: 0,
+    skewY: -5,
+    opacity: 1.0,
+    normalThreshold: -0.8
 };
 
-// Utility function for loading overlay
-function handleLoadingOverlay(action) {
-    const loadingOverlay = document.querySelector('.loading-overlay');
-    if (!loadingOverlay) return;
+// Add camera parameters
+let cameraParams = {
+    posX: 376.34,
+    posY: 78.18,
+    posZ: -319.78,
+    targetX: 0,
+    targetY: 0,
+    targetZ: 0
+};
 
-    if (action === 'remove') {
-        loadingOverlay.classList.add('fade-out');
-        setTimeout(() => {
-            loadingOverlay.style.display = 'none';
-        }, 500);
-    } else if (action === 'hide') {
-        loadingOverlay.style.display = 'none';
-    }
-}
-
-// Mobile device handling
-function setupMobileControls(controls, camera) {
-    controls.minPolarAngle = Math.PI / 2.2;
-    controls.maxPolarAngle = Math.PI / 2.2;
-    controls.enableZoom = false;
-
-    if (window.innerWidth <= 768) {
-        const widthRatio = window.innerWidth / 768;
-        camera.position.z *= (1 + (1 - widthRatio));
-        camera.updateProjectionMatrix();
-
-        // Setup pinch zoom if Hammer.js is available
-        if (typeof Hammer !== 'undefined') {
-            const mc = new Hammer(renderer.domElement);
-            mc.get('pinch').set({ enable: true });
-            
-            let initialScale;
-            
-            mc.on('pinchstart', (e) => {
-                initialScale = camera.position.z;
-                if (controls) controls.enabled = false;
-            });
-            
-            mc.on('pinchend', (e) => {
-                if (controls) controls.enabled = true;
-            });
-
-            mc.on('pinch', (e) => {
-                const minZoom = camera.position.z / 2;
-                const maxZoom = camera.position.z * 2;
-                let newZ = initialScale / e.scale;
-                newZ = Math.max(minZoom, Math.min(maxZoom, newZ));
-                camera.position.z = newZ;
-                camera.updateProjectionMatrix();
-            });
-        }
-    }
-}
+// Add model rotation parameters
+let modelParams = {
+    rotationX: 57 * Math.PI / 180,    // 57 degrees
+    rotationY: -43 * Math.PI / 180,   // -43 degrees
+    rotationZ: -169 * Math.PI / 180   // -169 degrees
+};
 
 function init() {
     // Scene setup
@@ -95,70 +43,115 @@ function init() {
     scene.background = new THREE.Color(0xcdcdcd);
 
     // Camera setup
-    camera = new THREE.PerspectiveCamera(
-        params.camera.fov,
-        window.innerWidth / window.innerHeight,
-        0.1,
-        1000
-    );
-    camera.position.set(params.camera.posX, params.camera.posY, params.camera.posZ);
-    camera.lookAt(params.camera.targetX, params.camera.targetY, params.camera.targetZ);
+    camera = new THREE.PerspectiveCamera(25, window.innerWidth / window.innerHeight, 0.1, 1000);
+    camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
 
     // Renderer setup
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
     
+    // Clear any existing content
     while (modelContainer.firstChild) {
         modelContainer.removeChild(modelContainer.firstChild);
     }
     modelContainer.appendChild(renderer.domElement);
 
-    // Controls setup
+    // Add OrbitControls with enhanced settings for horizontal rotation
     controls = new THREE.OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
     controls.screenSpacePanning = false;
     controls.minDistance = 100;
     controls.maxDistance = 500;
-    controls.enablePan = false;
-    controls.autoRotate = true;
-    controls.autoRotateSpeed = 1.2;
-
-    // Handle mobile/desktop settings
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobile) {
-        setupMobileControls(controls, camera);
-    } else {
-        controls.minPolarAngle = Math.PI / 3;
-        controls.maxPolarAngle = Math.PI / 2.2;
-        controls.enableZoom = true;
-    }
-
-    setupLighting();
-    loadModelAndTexture();
-    animate();
-}
-
-function setupLighting() {
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2));
     
-    const lights = [
-        { type: 'front', position: [0, 0, 300], intensity: 1.2 },
-        { type: 'top', position: [0, 300, 0], intensity: 1.0 },
-        { type: 'bottom', position: [0, -300, 0], intensity: 1.0 },
-        { type: 'back', position: [0, 0, -300], intensity: 1.0 },
-        { type: 'backLeft', position: [-200, 0, -200], intensity: 0.8 },
-        { type: 'backRight', position: [200, 0, -200], intensity: 0.8 }
-    ];
+    // Check if on mobile device
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+        // Lock vertical rotation on mobile
+        controls.minPolarAngle = Math.PI / 2.2;    // Lock to bottom position
+        controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
+        controls.enableZoom = false;               // Disable zoom on mobile
+    } else {
+        // Desktop settings
+        controls.minPolarAngle = Math.PI / 3;      // Limit upward rotation
+        controls.maxPolarAngle = Math.PI / 2.2;    // Limit downward rotation
+        controls.enableZoom = true;                // Allow zoom on desktop
+    }
+    
+    controls.enablePan = false;              // Disable panning
+    controls.autoRotate = true;              // Enable auto-rotation
+    controls.autoRotateSpeed = 1.2;          // Rotation speed
 
-    lights.forEach(light => {
-        const directionalLight = new THREE.DirectionalLight(0xffffff, light.intensity);
-        directionalLight.position.set(...light.position);
-        if (light.type !== 'front' && light.type !== 'backLeft' && light.type !== 'backRight') {
-            directionalLight.lookAt(0, 0, 0);
-        }
-        scene.add(directionalLight);
+    // Enhanced lighting setup
+    // Ambient light for overall illumination
+    scene.add(new THREE.AmbientLight(0xffffff, 1.2)); // Increased ambient for better overall illumination
+    
+    // Main front light
+    const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
+    frontLight.position.set(0, 0, 300); // Positioned directly in front
+    scene.add(frontLight);
+
+    // Strong top-down light
+    const topLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    topLight.position.set(0, 300, 0);  // Directly above
+    topLight.lookAt(0, 0, 0);
+    scene.add(topLight);
+
+    // Bottom up-light
+    const bottomLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    bottomLight.position.set(0, -300, 0);  // Directly below
+    bottomLight.lookAt(0, 0, 0);
+    scene.add(bottomLight);
+
+    // Back light for visibility
+    const backLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    backLight.position.set(0, 0, -300);  // Directly behind
+    scene.add(backLight);
+
+    // Back side lights for better edge definition
+    const backLeftLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    backLeftLight.position.set(-200, 0, -200);
+    scene.add(backLeftLight);
+
+    const backRightLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    backRightLight.position.set(200, 0, -200);
+    scene.add(backRightLight);
+
+    // Load texture and model
+    const textureLoader = new THREE.TextureLoader();
+    const stlLoader = new THREE.STLLoader();
+    
+    Promise.all([
+        new Promise(resolve => {
+            textureLoader.load('dashboard-texture.png', texture => {
+                texture.encoding = THREE.sRGBEncoding;
+                texture.flipY = false;
+                texture.rotation = (textureParams.rotation * Math.PI) / 180;
+                texture.center.set(textureParams.centerX, textureParams.centerY);
+                texture.repeat.set(textureParams.stretchX, textureParams.stretchY);
+                texture.offset.set(0, 0);
+                // Enhanced texture quality settings
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.minFilter = THREE.LinearMipMapLinearFilter;  // Trilinear filtering
+                texture.magFilter = THREE.LinearFilter;              // Bilinear filtering
+                texture.generateMipmaps = true;
+                texture.premultiplyAlpha = true;                    // Better alpha handling
+                texture.needsUpdate = true;
+                resolve(texture);
+            });
+        }),
+        new Promise(resolve => {
+            stlLoader.load('stl_case.stl', geometry => {
+                resolve(geometry);
+            });
+        })
+    ]).then(([texture, geometry]) => {
+        createModel(geometry, texture);
     });
+
+    animate();
 }
 
 function createModel(geometry, texture) {
@@ -177,7 +170,7 @@ function createModel(geometry, texture) {
             normalAttribute.getZ(i)
         );
         
-        if (normal.z < params.texture.normalThreshold) {
+        if (normal.z < textureParams.normalThreshold) {
             for (let j = 0; j < 3; j++) {
                 const x = positionAttribute.getX(i + j);
                 const y = positionAttribute.getY(i + j);
@@ -203,7 +196,7 @@ function createModel(geometry, texture) {
             normalAttribute.getZ(i)
         );
         
-        if (normal.z < params.texture.normalThreshold) {
+        if (normal.z < textureParams.normalThreshold) {
             for (let j = 0; j < 3; j++) {
                 const x = positionAttribute.getX(i + j);
                 const y = positionAttribute.getY(i + j);
@@ -211,17 +204,17 @@ function createModel(geometry, texture) {
                 let u = (x - centerX) / (faceWidth / 2);
                 let v = (y - centerY) / (faceHeight / 2);
                 
-                u *= params.texture.scaleX / 100;
-                v *= params.texture.scaleY / 100;
+                u *= textureParams.scaleX / 100;
+                v *= textureParams.scaleY / 100;
                 
-                const skewX = params.texture.skewX / 25;
-                const skewY = params.texture.skewY / 25;
+                const skewX = textureParams.skewX / 25;
+                const skewY = textureParams.skewY / 25;
                 const oldU = u;
                 u += v * skewX;
                 v += oldU * skewY;
                 
-                u += params.texture.offsetX / 100;
-                v += params.texture.offsetY / 100;
+                u += textureParams.offsetX / 100;
+                v += textureParams.offsetY / 100;
                 
                 u = (u + 1) / 2;
                 v = (v + 1) / 2;
@@ -238,8 +231,8 @@ function createModel(geometry, texture) {
     const material = new THREE.MeshLambertMaterial({
         color: 0xffffff,
         map: texture,
-        transparent: params.texture.opacity < 1.0,
-        opacity: params.texture.opacity,
+        transparent: textureParams.opacity < 1.0,
+        opacity: textureParams.opacity,
         emissive: 0x000000,
         reflectivity: 0,
         alphaTest: 0.1,           // Helps with texture edges
@@ -265,23 +258,29 @@ function createModel(geometry, texture) {
     
     // Set initial rotation using modelParams
     model.rotation.set(
-        params.model.rotationX,
-        params.model.rotationY,
-        params.model.rotationZ
+        modelParams.rotationX,
+        modelParams.rotationY,
+        modelParams.rotationZ
     );
     
     scene.add(model);
     
     // Set camera to initial position
-    camera.position.set(params.camera.posX, params.camera.posY, params.camera.posZ);
-    camera.lookAt(params.camera.targetX, params.camera.targetY, params.camera.targetZ);
+    camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
     
     // Update controls target and refresh
-    controls.target.set(params.camera.targetX, params.camera.targetY, params.camera.targetZ);
+    controls.target.set(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
     controls.update();
     
     // Remove loading overlay
-    handleLoadingOverlay('remove');
+    const loadingOverlay = document.querySelector('.loading-overlay');
+    if (loadingOverlay) {
+        loadingOverlay.classList.add('fade-out');
+        setTimeout(() => {
+            loadingOverlay.style.display = 'none';
+        }, 500);
+    }
 }
 
 function animate() {
@@ -302,36 +301,23 @@ window.addEventListener('resize', () => {
 });
 
 // Initialize everything when the DOM is loaded
+document.addEventListener('DOMContentLoaded', init);
+
+// Loading animation
 document.addEventListener('DOMContentLoaded', () => {
-    init();
-    initCarousel();
-    observeFeatures();
-    initSmoothScroll();
-    initPageTransitions();
-    initCompatibilityChecker();
-
-    // Handle loading overlay
-    if (!modelContainer) {
-        handleLoadingOverlay('hide');
-    } else {
-        window.addEventListener('load', () => handleLoadingOverlay('remove'));
-    }
-
-    // Hamburger menu
-    const hamburger = document.querySelector('.hamburger-menu');
-    const nav = document.querySelector('nav');
+    const loadingOverlay = document.querySelector('.loading-overlay');
     
-    if (hamburger && nav) {
-        hamburger.addEventListener('click', () => {
-            hamburger.classList.toggle('active');
-            nav.classList.toggle('active');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('active')) {
-                hamburger.classList.remove('active');
-                nav.classList.remove('active');
-            }
+    // Remove loading overlay
+    if (!modelContainer) {
+        // For non-home pages, remove immediately
+        loadingOverlay.style.display = 'none';
+    } else {
+        // For home page, wait for content
+        window.addEventListener('load', () => {
+            loadingOverlay.classList.add('fade-out');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
         });
     }
 });
@@ -809,3 +795,32 @@ const initCarousel = () => {
     // Initialize the carousel
     initializeSlides();
 };
+
+// Initialize everything when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initCarousel();
+    observeFeatures();
+    initSmoothScroll();
+    initPageTransitions();
+    initCompatibilityChecker();
+});
+
+// Hamburger menu functionality
+document.addEventListener('DOMContentLoaded', () => {
+    const hamburger = document.querySelector('.hamburger-menu');
+    const nav = document.querySelector('nav');
+    
+    hamburger.addEventListener('click', () => {
+        hamburger.classList.toggle('active');
+        nav.classList.toggle('active');
+    });
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+        if (!nav.contains(e.target) && !hamburger.contains(e.target) && nav.classList.contains('active')) {
+            hamburger.classList.remove('active');
+            nav.classList.remove('active');
+        }
+    });
+});
