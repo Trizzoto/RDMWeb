@@ -50,6 +50,11 @@ function init() {
     // Renderer setup
     renderer = new THREE.WebGLRenderer({ antialias: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
+    
+    // Clear any existing content
+    while (modelContainer.firstChild) {
+        modelContainer.removeChild(modelContainer.firstChild);
+    }
     modelContainer.appendChild(renderer.domElement);
 
     // Add OrbitControls with enhanced settings for horizontal rotation
@@ -656,8 +661,144 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Initialize all functionality
+// Carousel functionality
+const initCarousel = () => {
+    const slides = document.querySelectorAll('.carousel-slide');
+    const prevBtn = document.querySelector('.carousel-arrow.prev');
+    const nextBtn = document.querySelector('.carousel-arrow.next');
+    let currentSlide = 0;
+    const totalSlides = slides.length;
+    let isTransitioning = false;
+
+    // Initialize slides
+    function initializeSlides() {
+        slides.forEach((slide, index) => {
+            if (index === 0) {
+                slide.classList.add('active');
+                slide.style.transform = 'translateX(0)';
+                slide.style.visibility = 'visible';
+            } else {
+                slide.style.transform = 'translateX(100%)';
+                slide.style.visibility = 'hidden';
+            }
+        });
+    }
+
+    function updateSlides(direction) {
+        if (isTransitioning) return;
+        isTransitioning = true;
+
+        const nextIndex = (direction === 'next') 
+            ? (currentSlide + 1) % totalSlides 
+            : (currentSlide - 1 + totalSlides) % totalSlides;
+
+        // Position slides for transition
+        slides.forEach((slide, index) => {
+            // Reset all slides first
+            slide.style.visibility = 'hidden';
+            slide.classList.remove('active', 'prev', 'next');
+
+            if (index === currentSlide) {
+                // Current slide moves out
+                slide.style.visibility = 'visible';
+                slide.style.transform = direction === 'next' ? 'translateX(-100%)' : 'translateX(100%)';
+            } else if (index === nextIndex) {
+                // Next slide moves in
+                slide.style.visibility = 'visible';
+                slide.classList.add('active');
+                slide.style.transform = 'translateX(0)';
+                
+                // Enable 3D controls if it's the model
+                if (slide.id === 'model-container' && controls) {
+                    controls.enabled = true;
+                }
+            } else {
+                // Hide other slides
+                slide.style.transform = direction === 'next' ? 'translateX(100%)' : 'translateX(-100%)';
+                
+                // Disable 3D controls if it's the model
+                if (slide.id === 'model-container' && controls) {
+                    controls.enabled = false;
+                }
+            }
+        });
+
+        // Update current slide after transition
+        setTimeout(() => {
+            currentSlide = nextIndex;
+            isTransitioning = false;
+            
+            // Hide all non-active slides after transition
+            slides.forEach((slide, index) => {
+                if (index !== currentSlide) {
+                    slide.style.visibility = 'hidden';
+                }
+            });
+        }, 500);
+    }
+
+    function nextSlide() {
+        updateSlides('next');
+    }
+
+    function prevSlide() {
+        updateSlides('prev');
+    }
+
+    // Event listeners for navigation arrows
+    if (prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', prevSlide);
+        nextBtn.addEventListener('click', nextSlide);
+    }
+
+    // Add keyboard navigation
+    document.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') {
+            prevSlide();
+        } else if (e.key === 'ArrowRight') {
+            nextSlide();
+        }
+    });
+
+    // Add touch swipe support
+    let touchStartX = 0;
+    let touchEndX = 0;
+
+    const carouselContainer = document.querySelector('.carousel-container');
+    if (carouselContainer) {
+        carouselContainer.addEventListener('touchstart', (e) => {
+            if (isTransitioning) return;
+            touchStartX = e.touches[0].clientX;
+        });
+
+        carouselContainer.addEventListener('touchend', (e) => {
+            if (isTransitioning) return;
+            touchEndX = e.changedTouches[0].clientX;
+            handleSwipe();
+        });
+    }
+
+    function handleSwipe() {
+        const swipeThreshold = 50;
+        const swipeDistance = touchEndX - touchStartX;
+
+        if (Math.abs(swipeDistance) > swipeThreshold) {
+            if (swipeDistance > 0) {
+                prevSlide();
+            } else {
+                nextSlide();
+            }
+        }
+    }
+
+    // Initialize the carousel
+    initializeSlides();
+};
+
+// Initialize everything when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
+    init();
+    initCarousel();
     observeFeatures();
     initSmoothScroll();
     initPageTransitions();

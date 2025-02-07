@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Products | RDM Performance</title>
+    <title>Products | RDM Development Product Guide</title>
     <link rel="stylesheet" href="styles.css">
-    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;600;700&family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
 </head>
 <body>
@@ -30,7 +30,7 @@
                         <a href="products.html">Products</a>
                     </li>
                     <li><a href="downloads.html">Downloads</a></li>
-                    <li><a href="guide.html">Product Guide</a></li>
+                    <li><a href="guide.html">Development Product Guide</a></li>
                     <li><a href="compatibility.html">Compatibility</a></li>
                     <li><a href="about-us.html">About Us</a></li>
                 </ul>
@@ -39,39 +39,81 @@
     </header>
 
     <main class="products-page">
-        <div class="products-container">
-            <aside class="product-sidebar">
-                <div class="sidebar-section">
-                    <h2>Categories</h2>
-                    <ul>
-                        <li><a href="#" class="active">Digital Dashboards</a></li>
-                    </ul>
+        <div class="product-showcase">
+            <h1 class="product-heading">RDM-7 Dashboard</h1>
+            <a href="rdm-7-dash.html" class="product-link">
+                <div class="product-frame">
+                    <img src="Print-display.png" alt="RDM-7 Dashboard" class="product-image">
                 </div>
-                <div class="sidebar-section">
-                    <h2>Screen Size</h2>
-                    <ul>
-                        <li><a href="#" class="active">7 inch</a></li>
-                    </ul>
-                </div>
-            </aside>
-
-            <div class="product-content">
-                <div class="product-card">
-                    <div class="product-image">
-                        <img src="rdm-7-dash.png" alt="RDM-7 Dashboard">
-                    </div>
-                    <h1>RDM-7 Dashboard</h1>
-                    <div class="product-details">
-                        <div class="product-price">
-                            <span class="price-label">Pre-order Sale</span>
-                            <span class="price">$499</span>
-                        </div>
-                        <a href="rdm-7-dash.html" class="pre-order-btn">VIEW PRODUCT</a>
-                    </div>
-                </div>
-            </div>
+            </a>
         </div>
     </main>
+
+    <style>
+        .products-page {
+            padding: 2rem;
+            min-height: calc(100vh - 80px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f5f5f5;
+        }
+
+        .product-showcase {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .product-heading {
+            font-family: 'Roboto', sans-serif;
+            text-align: center;
+            font-size: 2.8rem;
+            margin-bottom: 2rem;
+            color: #222;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: none;
+        }
+
+        .product-link {
+            display: block;
+            width: 100%;
+            text-decoration: none;
+            transition: transform 0.3s ease;
+        }
+
+        .product-link:hover {
+            transform: scale(1.02);
+        }
+
+        .product-frame {
+            width: 100%;
+            height: 33vh;
+            border: 2px solid #333;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            background-color: white;
+        }
+
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            padding: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .products-page {
+                padding: 1rem;
+            }
+
+            .product-frame {
+                height: 25vh;
+            }
+        }
+    </style>
 
     <script src="script.js"></script>
 </body>

@@ -41,7 +41,26 @@
 
     <main>
         <section class="hero">
-            <div id="model-container" class="hero-background"></div>
+            <div class="carousel-container">
+                <!-- 3D Model Slide -->
+                <div class="carousel-slide active">
+                    <div id="model-container"></div>
+                </div>
+                <!-- Image Slides -->
+                <div class="carousel-slide">
+                    <img src="hero-image-1.jpg" alt="RDM Product Image 1" class="hero-image">
+                </div>
+                <div class="carousel-slide">
+                    <img src="hero-image-2.jpg" alt="RDM Product Image 2" class="hero-image">
+                </div>
+                
+                <button class="carousel-arrow prev">
+                    <i class="fas fa-chevron-left"></i>
+                </button>
+                <button class="carousel-arrow next">
+                    <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
             <div class="hero-overlay">
                 <!-- New text animations will go here -->
             </div>
@@ -144,7 +163,5 @@
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/STLLoader.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
     <script src="script.js"></script>
-
-    <div id="model-container"></div>
 </body>
 </html>
