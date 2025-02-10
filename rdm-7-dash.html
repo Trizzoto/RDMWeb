@@ -7,6 +7,31 @@
     <link rel="stylesheet" href="styles.css">
     <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .original-price {
+            position: relative;
+            color: #666;
+        }
+        
+        .original-price::after {
+            content: '';
+            position: absolute;
+            left: -2px;
+            top: 50%;
+            width: calc(100% + 4px);
+            height: 2px;
+            background-color: #ff0000;
+            transform: rotate(-10deg) translateY(-50%);
+        }
+
+        .shipping-info {
+            display: block;
+            font-size: 0.9rem;
+            color: #666;
+            margin-top: 0.5rem;
+            font-family: 'Montserrat', sans-serif;
+        }
+    </style>
 </head>
 <body>
     <div class="loading-overlay">
@@ -28,7 +53,7 @@
                 <ul class="nav-links">
                     <li><a href="products.html">Products</a></li>
                     <li><a href="downloads.html">Downloads</a></li>
-                    <li><a href="guide.html">Product Guide</a></li>
+                    <li><a href="guide.html">Development Product Guide</a></li>
                     <li><a href="compatibility.html">Compatibility</a></li>
                     <li><a href="about-us.html">About Us</a></li>
                 </ul>
@@ -40,15 +65,15 @@
         <section class="overview-hero">
             <div class="hero-content">
                 <h1>RDM-7 Dash</h1>
-                <p class="hero-subtitle">Professional Grade Digital Dashboard</p>
                 <div class="price-tag">
                     <span class="price-label">Pre-order Sale</span>
-                    <span class="price">$499</span>
+                    <span class="price"><span class="original-price">$799</span> $699</span>
+                    <span class="shipping-info">Free Postage Australia Wide on orders over $400</span>
                 </div>
                 <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
             </div>
             <div class="hero-image">
-                <img src="rdm-7-dash.png" alt="RDM-7 Digital Dashboard">
+                <img src="rdm-7-dash.jpg" alt="RDM-7 Digital Dashboard">
             </div>
         </section>
 
@@ -112,8 +137,8 @@
 
         <section class="cta-section">
             <div class="cta-content">
-                <h2>Ready to Transform Your Dashboard?</h2>
-                <p>Pre-order now and be among the first to experience the future of vehicle monitoring.</p>
+                <h2>Ready to Transform Your Dash?</h2>
+                <p>Pre-order now and be among the first to experience the power of real-time data monitoring.</p>
                 <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
             </div>
         </section>
@@ -143,7 +168,7 @@
             <div class="footer-section">
                 <h3>Questions?</h3>
                 <p>Please Contact us</p>
-                <a href="mailto:info@realtimedatamonitoring.com">info@realtimedatamonitoring.com</a>
+                <a href="mailto:tommy@realtimedatamonitoring.com.au">tommy@realtimedatamonitoring.com.au</a>
             </div>
         </div>
         <div class="footer-bottom">
