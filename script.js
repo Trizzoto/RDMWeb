@@ -253,7 +253,10 @@ function createModel(geometry, texture) {
     const box = new THREE.Box3().setFromObject(model);
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
-    const scale = 200 / maxDim; // Scale to reasonable size
+    
+    // Adjust scale based on device type
+    const isMobile = window.innerWidth <= 768;
+    const scale = isMobile ? 150 / maxDim : 200 / maxDim; // Smaller scale for mobile
     model.scale.multiplyScalar(scale);
     
     // Set initial rotation using modelParams
@@ -265,8 +268,17 @@ function createModel(geometry, texture) {
     
     scene.add(model);
     
-    // Set camera to initial position
-    camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    // Adjust camera position for mobile
+    if (isMobile) {
+        camera.position.set(
+            cameraParams.posX * 1.2,  // Move camera slightly further back
+            cameraParams.posY * 1.2,
+            cameraParams.posZ * 1.2
+        );
+    } else {
+        camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
+    }
+    
     camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
     
     // Update controls target and refresh
