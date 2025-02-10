@@ -1,21 +1,110 @@
-<section class="about-section">
-    <div class="tech-badge">
-      <svg><!-- Custom tech icon --></svg>
-      <span>Automotive Tech Experts Since 2018</span>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - RDM</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Fugaz+One&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        .about-container {
+            padding-top: calc(100px + 3%);
+        }
+        .about-section p {
+            margin-bottom: 2.5em;
+        }
+        .about-section p:last-child {
+            margin-bottom: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="loading-overlay">
+        <div class="loader"></div>
     </div>
-    
-    <div class="innovation-timeline">
-      <div class="timeline-item">
-        <h3>2018</h3>
-        <p>Founded with focus on motorsport telemetry</p>
-      </div>
-      <div class="timeline-item">
-        <h3>2020</h3>
-        <p>Launched first aftermarket digital dash system</p>
-      </div>
-      <div class="timeline-item">
-        <h3>2023</h3>
-        <p>Awarded "Best Innovation" at SEMA Show</p>
-      </div>
-    </div>
-  </section>
+    <header>
+        <div class="nav-container">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="rdm-logo.png" alt="RDM - Realtime Data Monitoring" class="logo-img">
+                </a>
+            </div>
+            <button class="hamburger-menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav>
+                <ul class="nav-links">
+                    <li>
+                        <a href="products.html">Products</a>
+                    </li>
+                    <li><a href="downloads.html">Downloads</a></li>
+                    <li><a href="guide.html">Development Product Guide</a></li>
+                    <li><a href="compatibility.html">Compatibility</a></li>
+                    <li><a href="about-us.html" class="active">About Us</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="about-container">
+        <h1>About Us</h1>
+        
+        <section class="about-content">
+            <div class="about-section">
+                <p>At Realtime Data Monitoring (RDM), we specialize in creating innovative solutions for real-time data tracking and visualization. Founded by Tommy and co-founded by James, RDM was built on a shared vision: to provide users with instant, accurate, and actionable insights through advanced monitoring systems.</p>
+
+
+                <p>The idea for RDM originated from a personal project. Frustrated by the limited information provided by his car's standard display, Tommy set out to design a system that offered real-time updates and critical warnings, giving him a complete understanding of his vehicle's performance. What began as a passion project quickly gained attention from others, inspiring the development of a broader solution.</p>
+
+
+                <p>To bring this vision to life, James joined the team, contributing his expertise in 3D design, modeling, and printing, as well as his engineering background. Together, Tommy and James combined their technical skills and innovative thinking to transform a simple concept into a fully realized product. With over a decade of friendship and collaboration—dating back to their high school years—they've built RDM on a foundation of trust, creativity, and a commitment to excellence.</p>
+
+
+                <p>Today, RDM is proud to deliver cutting-edge products that empower users to stay informed and in control. Whether it's for the automotive industry or other applications, our mission is to provide reliable, user-focused solutions that redefine the way data is monitored and utilized.</p>
+
+
+                <p>Thank you for choosing RDM. We're excited to be part of your journey toward smarter, faster and more efficient data monitoring strategies.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <div class="footer-container">
+            <div class="footer-logo">
+                <img src="rdm-logo.png" alt="RDM - Realtime Data Monitoring" class="footer-logo-img">
+            </div>
+            <div class="footer-section">
+                <h3>Socials</h3>
+                <div class="social-icons">
+                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>About Us</h3>
+                <ul>
+                    <li><a href="support.html#faq">FAQ</a></li>
+                    <li><a href="support.html#warranty">Warranty</a></li>
+                    <li><a href="support.html#shipping">Shipping & Returns</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Questions?</h3>
+                <p>Please Contact us</p>
+                <a href="mailto:info@realtimedatamonitoring.com">info@realtimedatamonitoring.com</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 Realtime Data Monitoring</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
