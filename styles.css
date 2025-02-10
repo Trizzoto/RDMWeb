@@ -592,7 +592,7 @@ html {
 }
 
 .product-link:hover .product-image {
-    transform: scale(1.02);
+    transform: scale(1.05);  /* Increased from 1.02 for more noticeable zoom */
 }
 
 @media (max-width: 768px) {
@@ -2534,5 +2534,11 @@ footer {
 }
 
 .product-frame:hover .product-image {
-    transform: scale(1.02);
+    transform: scale(1.05);  /* Increased from 1.02 for more noticeable zoom */
+}
+
+@media (max-width: 768px) {
+    .products-page {
+        padding: 1rem;
+    }
 }
