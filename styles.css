@@ -1913,7 +1913,9 @@ body.is-exiting {
 .hero-image img {
     width: 100%;
     height: auto;
-    object-fit: cover;
+    object-fit: contain;
+    max-width: 100%;
+    display: block;
 }
 
 .features-grid {
@@ -2128,6 +2130,14 @@ body.is-exiting {
 
     .hero-image {
         max-width: 100%;
+        margin-top: 2rem;
+        padding: 0 1rem;
+    }
+
+    .hero-image img {
+        width: 100%;
+        max-width: 400px;
+        margin: 0 auto;
     }
 
     .features-grid {
@@ -2236,7 +2246,16 @@ body.is-exiting {
     }
     
     .hero-image {
-        object-position: center top;  /* Adjust focus point for mobile */
+        padding: 0;
+    }
+    
+    .hero-image img {
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .overview-hero {
+        padding: 1rem;
     }
 }
 
