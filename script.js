@@ -74,50 +74,83 @@ function init() {
         controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.enableZoom = false;               // Disable zoom on mobile
     } else {
-        // Desktop settings
-        controls.minPolarAngle = Math.PI / 3;      // Limit upward rotation
-        controls.maxPolarAngle = Math.PI / 2.2;    // Limit downward rotation
-        controls.enableZoom = true;                // Allow zoom on desktop
+        // Desktop settings - allow full rotation
+        controls.minPolarAngle = 0;               // Allow full vertical rotation
+        controls.maxPolarAngle = Math.PI;         // Allow full vertical rotation
+        controls.enableZoom = true;               // Allow zoom on desktop
     }
     
     controls.enablePan = false;              // Disable panning
     controls.autoRotate = true;              // Enable auto-rotation
     controls.autoRotateSpeed = 1.2;          // Rotation speed
 
+    // Add wheel event handler for page scrolling when zoomed out or not at top
+    renderer.domElement.addEventListener('wheel', (event) => {
+        if (!isMobile) {  // Only for desktop
+            const distance = camera.position.distanceTo(controls.target);
+            const isAtTop = window.scrollY === 0;
+            
+            // If not at top of page, always allow page scrolling
+            if (!isAtTop) {
+                event.stopPropagation();
+                window.scrollBy(0, event.deltaY);
+                controls.enableZoom = false;
+                return;
+            }
+            
+            // At top of page
+            if (distance >= controls.maxDistance * 0.95) {  // When nearly or fully zoomed out
+                event.stopPropagation();
+                window.scrollBy(0, event.deltaY);
+            } else {
+                controls.enableZoom = true;  // Allow zooming when at top and not fully zoomed out
+            }
+        }
+    }, { passive: true });
+
+    // Re-enable zoom when scrolling back to top
+    window.addEventListener('scroll', () => {
+        if (!isMobile && window.scrollY === 0) {
+            controls.enableZoom = true;
+        }
+    }, { passive: true });
+
     // Enhanced lighting setup
     // Ambient light for overall illumination
-    scene.add(new THREE.AmbientLight(0xffffff, 1.2)); // Increased ambient for better overall illumination
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);  // Reduced intensity for more contrast
+    scene.add(ambientLight);
     
     // Main front light
-    const frontLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    frontLight.position.set(0, 0, 300); // Positioned directly in front
+    const frontLight = new THREE.DirectionalLight(0xffffff, 1.0);
+    frontLight.position.set(0, 0, 300);
+    frontLight.castShadow = true;
     scene.add(frontLight);
 
-    // Strong top-down light
-    const topLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    topLight.position.set(0, 300, 0);  // Directly above
+    // Top-down rim light
+    const topLight = new THREE.DirectionalLight(0xffffff, 0.8);
+    topLight.position.set(0, 300, 100);  // Adjusted position for better rim lighting
     topLight.lookAt(0, 0, 0);
     scene.add(topLight);
 
-    // Bottom up-light
-    const bottomLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    bottomLight.position.set(0, -300, 0);  // Directly below
+    // Subtle fill light from bottom
+    const bottomLight = new THREE.DirectionalLight(0xffffff, 0.3);  // Reduced intensity
+    bottomLight.position.set(0, -200, 100);  // Adjusted position
     bottomLight.lookAt(0, 0, 0);
     scene.add(bottomLight);
 
-    // Back light for visibility
-    const backLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    backLight.position.set(0, 0, -300);  // Directly behind
+    // Back rim light for edge definition
+    const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
+    backLight.position.set(0, 50, -200);  // Adjusted position
     scene.add(backLight);
 
-    // Back side lights for better edge definition
-    const backLeftLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    backLeftLight.position.set(-200, 0, -200);
-    scene.add(backLeftLight);
+    // Side accent lights
+    const leftLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    leftLight.position.set(-200, 50, 100);
+    scene.add(leftLight);
 
-    const backRightLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    backRightLight.position.set(200, 0, -200);
-    scene.add(backRightLight);
+    const rightLight = new THREE.DirectionalLight(0xffffff, 0.4);
+    rightLight.position.set(200, 50, 100);
+    scene.add(rightLight);
 
     // Load texture and model
     const textureLoader = new THREE.TextureLoader();
@@ -228,14 +261,15 @@ function createModel(geometry, texture) {
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
     geometry.attributes.uv.needsUpdate = true;
     
-    const material = new THREE.MeshLambertMaterial({
+    const material = new THREE.MeshPhongMaterial({
         color: 0xffffff,
         map: texture,
         transparent: textureParams.opacity < 1.0,
         opacity: textureParams.opacity,
-        emissive: 0x000000,
-        reflectivity: 0,
-        alphaTest: 0.1,           // Helps with texture edges
+        shininess: 60,           // Controls how shiny the material appears
+        specular: 0x333333,      // Color of the specular highlights
+        reflectivity: 0.5,       // Amount of light reflected
+        alphaTest: 0.1,          // Helps with texture edges
     });
     
     // Improve geometry quality
@@ -254,9 +288,9 @@ function createModel(geometry, texture) {
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
     
-    // Adjust scale based on device type
+    // Adjust scale based on device type (10% smaller than before)
     const isMobile = window.innerWidth <= 768;
-    const scale = isMobile ? 150 / maxDim : 200 / maxDim; // Smaller scale for mobile
+    const scale = isMobile ? (135 / maxDim) : (180 / maxDim); // Reduced from 150 and 200 by 10%
     model.scale.multiplyScalar(scale);
     
     // Set initial rotation using modelParams
@@ -313,7 +347,22 @@ window.addEventListener('resize', () => {
 });
 
 // Initialize everything when the DOM is loaded
-document.addEventListener('DOMContentLoaded', init);
+document.addEventListener('DOMContentLoaded', () => {
+    // Ensure page starts at the top
+    window.scrollTo(0, 0);
+    
+    init();
+    initCarousel();
+    observeFeatures();
+    initSmoothScroll();
+    initPageTransitions();
+    initCompatibilityChecker();
+});
+
+// Additional check on full page load
+window.addEventListener('load', () => {
+    window.scrollTo(0, 0);
+});
 
 // Loading animation
 document.addEventListener('DOMContentLoaded', () => {
@@ -789,16 +838,6 @@ const initCarousel = () => {
     initializeSlides();
 };
 
-// Initialize everything when DOM is loaded
-document.addEventListener('DOMContentLoaded', () => {
-    init();
-    initCarousel();
-    observeFeatures();
-    initSmoothScroll();
-    initPageTransitions();
-    initCompatibilityChecker();
-});
-
 // Hamburger menu functionality
 document.addEventListener('DOMContentLoaded', () => {
     const hamburger = document.querySelector('.hamburger-menu');
@@ -817,3 +856,8 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 });
+
+// Force scroll to top on page load
+window.onbeforeunload = function () {
+    window.scrollTo(0, 0);
+}
