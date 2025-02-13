@@ -2531,3 +2531,55 @@ footer {
         padding: 1rem;
     }
 }
+
+/* Instagram Reel Section */
+.instagram-reel {
+    padding: 4rem 2rem;
+    background-color: #f8f8f8;
+    text-align: center;
+}
+
+.instagram-grid {
+    max-width: 1200px;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+
+.desktop-posts {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 2rem;
+    width: 100%;
+}
+
+.instagram-post {
+    width: 100%;
+    min-height: 450px; /* Adjust this value as needed */
+}
+
+.mobile-reel {
+    display: none;
+    max-width: 540px;
+    margin: 0 auto;
+}
+
+@media (max-width: 1024px) {
+    .desktop-posts {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .instagram-reel {
+        padding: 2rem 1rem;
+    }
+    
+    .desktop-posts {
+        display: none;
+    }
+    
+    .mobile-reel {
+        display: block;
+    }
+}

@@ -73,6 +73,57 @@ function init() {
         controls.minPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.enableZoom = false;               // Disable zoom on mobile
+        controls.enablePan = false;                // Disable panning
+        controls.rotateSpeed = 0.5;                // Reduce rotation speed on mobile
+        controls.touches = {
+            ONE: THREE.TOUCH.ROTATE,
+            TWO: THREE.TOUCH.NONE
+        };
+        
+        // Add touch event handler for better scroll behavior
+        let touchStartY = 0;
+        let isTouching = false;
+        let touchTimeout;
+
+        modelContainer.addEventListener('touchstart', (e) => {
+            touchStartY = e.touches[0].clientY;
+            isTouching = true;
+            
+            // Disable OrbitControls briefly when starting to scroll vertically
+            clearTimeout(touchTimeout);
+            touchTimeout = setTimeout(() => {
+                isTouching = false;
+            }, 100);
+        }, { passive: true });
+
+        modelContainer.addEventListener('touchmove', (e) => {
+            if (!isTouching) return;
+            
+            const touchY = e.touches[0].clientY;
+            const deltaY = touchY - touchStartY;
+            
+            // If vertical scroll is detected (with some threshold)
+            if (Math.abs(deltaY) > 10) {
+                controls.enabled = false;  // Disable OrbitControls
+                // Re-enable after a short delay
+                clearTimeout(touchTimeout);
+                touchTimeout = setTimeout(() => {
+                    controls.enabled = true;
+                }, 300);
+            }
+        }, { passive: true });
+
+        modelContainer.addEventListener('touchend', () => {
+            isTouching = false;
+            clearTimeout(touchTimeout);
+            touchTimeout = setTimeout(() => {
+                controls.enabled = true;
+            }, 100);
+        }, { passive: true });
+
+        // Adjust camera and controls for mobile
+        camera.position.multiplyScalar(1.2);
+        controls.update();
     } else {
         // Desktop settings - allow full rotation
         controls.minPolarAngle = 0;               // Allow full vertical rotation
@@ -80,7 +131,6 @@ function init() {
         controls.enableZoom = true;               // Allow zoom on desktop
     }
     
-    controls.enablePan = false;              // Disable panning
     controls.autoRotate = true;              // Enable auto-rotation
     controls.autoRotateSpeed = 1.2;          // Rotation speed
 
@@ -288,9 +338,9 @@ function createModel(geometry, texture) {
     const size = box.getSize(new THREE.Vector3());
     const maxDim = Math.max(size.x, size.y, size.z);
     
-    // Adjust scale based on device type (10% smaller than before)
+    // Adjust scale based on device type
     const isMobile = window.innerWidth <= 768;
-    const scale = isMobile ? (135 / maxDim) : (180 / maxDim); // Reduced from 150 and 200 by 10%
+    const scale = isMobile ? (110 / maxDim) : (180 / maxDim); // Reduced mobile scale from 135 to 110
     model.scale.multiplyScalar(scale);
     
     // Set initial rotation using modelParams
@@ -305,10 +355,18 @@ function createModel(geometry, texture) {
     // Adjust camera position for mobile
     if (isMobile) {
         camera.position.set(
-            cameraParams.posX * 1.2,  // Move camera slightly further back
-            cameraParams.posY * 1.2,
-            cameraParams.posZ * 1.2
+            cameraParams.posX * 1.4,  // Increased from 1.2 to 1.4 to move camera further back
+            cameraParams.posY * 1.4,  // Increased from 1.2 to 1.4
+            cameraParams.posZ * 1.4   // Increased from 1.2 to 1.4
         );
+        
+        // Adjust texture parameters for mobile
+        if (material.map) {
+            material.map.minFilter = THREE.LinearFilter;  // Use simpler filtering on mobile
+            material.map.magFilter = THREE.LinearFilter;
+            material.map.anisotropy = 1;  // Reduce anisotropic filtering on mobile
+            material.map.needsUpdate = true;
+        }
     } else {
         camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
     }
