@@ -48,11 +48,15 @@
                 </div>
                 <!-- Image Slides -->
                 <div class="carousel-slide">
-                    <img src="hero-image-1.jpg" 
-                         srcset="hero-image-mobile-1.jpg 768w, hero-image-1.jpg 1024w"
-                         sizes="(max-width: 768px) 100vw, 100vw"
-                         alt="RDM Product Image 1" 
-                         class="hero-image">
+                    <picture>
+                        <!-- Mobile image -->
+                        <source media="(max-width: 768px)" 
+                                srcset="hero-image-1-mobile.jpg">
+                        <!-- Desktop image -->
+                        <img src="hero-image-1.jpg" 
+                             alt="RDM Product Image 1" 
+                             class="hero-image">
+                    </picture>
                 </div>
                 <div class="carousel-slide">
                     <img src="hero-image-2.jpg" alt="RDM Product Image 2" class="hero-image">

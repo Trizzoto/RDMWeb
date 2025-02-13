@@ -270,12 +270,9 @@ html {
 }
 
 .carousel-slide .hero-image {
-    max-width: 100%;
-    max-height: 100%;
-    width: auto;
+    width: 100%;
     height: auto;
-    object-fit: contain; /* Changed from cover to contain */
-    object-position: center;
+    object-fit: cover;
 }
 
 #model-container {
@@ -1908,7 +1905,7 @@ body.is-exiting {
 .hero-image img {
     width: 100%;
     height: auto;
-    object-fit: contain;
+    object-fit: cover;
 }
 
 .features-grid {
@@ -2540,5 +2537,15 @@ footer {
 @media (max-width: 768px) {
     .products-page {
         padding: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .carousel-slide {
+        height: 70vh;  /* Adjust mobile height */
+    }
+    
+    .hero-image {
+        object-position: center top;  /* Adjust focus point for mobile */
     }
 }
