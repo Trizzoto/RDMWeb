@@ -64,6 +64,8 @@ function init() {
     controls.screenSpacePanning = false;
     controls.minDistance = 100;
     controls.maxDistance = 500;
+    controls.autoRotate = true;              // Enable auto-rotation
+    controls.autoRotateSpeed = 1.2;          // Rotation speed
     
     // Check if on mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -75,9 +77,10 @@ function init() {
         controls.enableZoom = false;               // Disable zoom on mobile
         controls.enablePan = false;                // Disable panning
         controls.rotateSpeed = 0.5;                // Reduce rotation speed on mobile
+        controls.enableRotate = false;             // Disable manual rotation by default
         controls.touches = {
             ONE: THREE.TOUCH.ROTATE,
-            TWO: THREE.TOUCH.NONE
+            TWO: THREE.TOUCH.NONE                  // Initially disable two-finger touch
         };
 
         // Add 360° toggle functionality
@@ -86,12 +89,28 @@ function init() {
             rotateToggle.addEventListener('click', () => {
                 const isActive = rotateToggle.classList.toggle('active');
                 if (isActive) {
-                    // Enable full rotation
+                    // Enable full rotation and zoom
+                    controls.enableRotate = true;   // Enable manual rotation
+                    controls.enableZoom = true;     // Enable zoom in 360° mode
+                    controls.minDistance = 100;     // Set minimum zoom distance
+                    controls.maxDistance = 500;     // Set maximum zoom distance
+                    controls.touches = {            // Enable both rotation and pinch zoom
+                        ONE: THREE.TOUCH.ROTATE,
+                        TWO: THREE.TOUCH.DOLLY_PAN
+                    };
                     controls.minPolarAngle = 0;
                     controls.maxPolarAngle = Math.PI;
+                    controls.dampingFactor = 0.05;  // Smooth damping
+                    controls.rotateSpeed = 0.5;     // Adjusted rotate speed
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
-                    // Lock rotation back to default
+                    // Disable manual rotation and zoom
+                    controls.enableRotate = false;  // Disable manual rotation
+                    controls.enableZoom = false;    // Disable zoom
+                    controls.touches = {            // Disable all touch gestures
+                        ONE: THREE.TOUCH.ROTATE,
+                        TWO: THREE.TOUCH.NONE
+                    };
                     controls.minPolarAngle = Math.PI / 2.2;
                     controls.maxPolarAngle = Math.PI / 2.2;
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
@@ -104,31 +123,41 @@ function init() {
         let touchStartY = 0;
         let isTouching = false;
         let touchTimeout;
+        let lastTouchTime = 0;
+        const touchThreshold = 100; // Minimum time between touch events in ms
 
         modelContainer.addEventListener('touchstart', (e) => {
+            const currentTime = Date.now();
+            if (currentTime - lastTouchTime < touchThreshold) return;
+            lastTouchTime = currentTime;
+
             touchStartY = e.touches[0].clientY;
             isTouching = true;
             
-            // Disable OrbitControls briefly when starting to scroll vertically
-            clearTimeout(touchTimeout);
-            touchTimeout = setTimeout(() => {
-                isTouching = false;
-            }, 100);
+            if (controls.enableRotate) {
+                // Only handle touch events when manual rotation is enabled
+                clearTimeout(touchTimeout);
+                touchTimeout = setTimeout(() => {
+                    isTouching = false;
+                }, 100);
+            }
         }, { passive: true });
 
         modelContainer.addEventListener('touchmove', (e) => {
-            if (!isTouching) return;
+            if (!isTouching || !controls.enableRotate) return;
             
             const touchY = e.touches[0].clientY;
             const deltaY = touchY - touchStartY;
             
             // If vertical scroll is detected (with some threshold)
             if (Math.abs(deltaY) > 10) {
-                controls.enabled = false;  // Disable OrbitControls
-                // Re-enable after a short delay
+                controls.enableRotate = false;  // Temporarily disable manual rotation
+                // Re-enable after a short delay only if 360° view is active
                 clearTimeout(touchTimeout);
                 touchTimeout = setTimeout(() => {
-                    controls.enabled = true;
+                    if (document.querySelector('.rotate-toggle.active')) {
+                        controls.enableRotate = true;
+                    }
                 }, 300);
             }
         }, { passive: true });
@@ -136,9 +165,12 @@ function init() {
         modelContainer.addEventListener('touchend', () => {
             isTouching = false;
             clearTimeout(touchTimeout);
-            touchTimeout = setTimeout(() => {
-                controls.enabled = true;
-            }, 100);
+            // Only re-enable if 360° view is active
+            if (document.querySelector('.rotate-toggle.active')) {
+                touchTimeout = setTimeout(() => {
+                    controls.enableRotate = true;
+                }, 100);
+            }
         }, { passive: true });
 
         // Adjust camera and controls for mobile
@@ -151,9 +183,6 @@ function init() {
         controls.enableZoom = true;               // Allow zoom on desktop
     }
     
-    controls.autoRotate = true;              // Enable auto-rotation
-    controls.autoRotateSpeed = 1.2;          // Rotation speed
-
     // Add wheel event handler for page scrolling when zoomed out or not at top
     renderer.domElement.addEventListener('wheel', (event) => {
         if (!isMobile) {  // Only for desktop

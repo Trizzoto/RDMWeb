@@ -148,6 +148,27 @@
         .preorder-btn.disabled::after {
             display: none;
         }
+
+        .hero-image picture {
+            width: 100%;
+            height: 100%;
+            display: block;
+        }
+        
+        .hero-image img {
+            width: 100%;
+            height: auto;
+            object-fit: contain;
+            max-width: 100%;
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .hero-image img {
+                object-fit: cover;
+                max-height: 300px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -198,7 +219,10 @@
                 <button class="preorder-btn disabled" disabled>Coming Soon</button>
             </div>
             <div class="hero-image">
-                <img src="print-display.png" alt="RDM-7 Digital Dashboard">
+                <picture>
+                    <source media="(max-width: 768px)" srcset="hero-image-1.jpg">
+                    <img src="print-display.png" alt="RDM-7 Digital Dashboard">
+                </picture>
             </div>
         </section>
 
