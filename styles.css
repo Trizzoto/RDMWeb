@@ -2602,3 +2602,40 @@ footer {
         display: block;
     }
 }
+
+.model-controls {
+    position: fixed;
+    top: 80px;  /* Below the header */
+    left: 20px;
+    z-index: 100;
+    display: none;  /* Hidden by default, shown only on mobile */
+}
+
+.rotate-toggle {
+    background-color: rgba(0, 0, 0, 0.7);
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 20px;
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.rotate-toggle i {
+    font-size: 1.1rem;
+}
+
+.rotate-toggle.active {
+    background-color: #ff0000;
+}
+
+@media (max-width: 768px) {
+    .model-controls {
+        display: block;
+    }
+}

@@ -69,7 +69,7 @@ function init() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-        // Lock vertical rotation on mobile
+        // Lock vertical rotation on mobile by default
         controls.minPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.enableZoom = false;               // Disable zoom on mobile
@@ -79,6 +79,26 @@ function init() {
             ONE: THREE.TOUCH.ROTATE,
             TWO: THREE.TOUCH.NONE
         };
+
+        // Add 360° toggle functionality
+        const rotateToggle = document.querySelector('.rotate-toggle');
+        if (rotateToggle) {
+            rotateToggle.addEventListener('click', () => {
+                const isActive = rotateToggle.classList.toggle('active');
+                if (isActive) {
+                    // Enable full rotation
+                    controls.minPolarAngle = 0;
+                    controls.maxPolarAngle = Math.PI;
+                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
+                } else {
+                    // Lock rotation back to default
+                    controls.minPolarAngle = Math.PI / 2.2;
+                    controls.maxPolarAngle = Math.PI / 2.2;
+                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
+                }
+                controls.update();
+            });
+        }
         
         // Add touch event handler for better scroll behavior
         let touchStartY = 0;
@@ -208,19 +228,32 @@ function init() {
     
     Promise.all([
         new Promise(resolve => {
-            textureLoader.load('dashboard-texture.png', texture => {
+            // Check if mobile device
+            const isMobile = window.innerWidth <= 768;
+            const textureFile = isMobile ? 'dashboard-texture-mobile.png' : 'dashboard-texture.png';
+            
+            textureLoader.load(textureFile, texture => {
                 texture.encoding = THREE.sRGBEncoding;
                 texture.flipY = false;
                 texture.rotation = (textureParams.rotation * Math.PI) / 180;
                 texture.center.set(textureParams.centerX, textureParams.centerY);
                 texture.repeat.set(textureParams.stretchX, textureParams.stretchY);
                 texture.offset.set(0, 0);
-                // Enhanced texture quality settings
-                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                texture.minFilter = THREE.LinearMipMapLinearFilter;  // Trilinear filtering
-                texture.magFilter = THREE.LinearFilter;              // Bilinear filtering
-                texture.generateMipmaps = true;
-                texture.premultiplyAlpha = true;                    // Better alpha handling
+
+                if (isMobile) {
+                    // Mobile-specific texture settings
+                    texture.minFilter = THREE.LinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    texture.anisotropy = 1;
+                    texture.generateMipmaps = false;  // Disable mipmaps for mobile
+                } else {
+                    // Desktop texture settings
+                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                    texture.minFilter = THREE.LinearMipMapLinearFilter;
+                    texture.magFilter = THREE.LinearFilter;
+                    texture.generateMipmaps = true;
+                }
+                
                 texture.needsUpdate = true;
                 resolve(texture);
             });
