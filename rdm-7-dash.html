@@ -31,6 +31,123 @@
             margin-top: 0.5rem;
             font-family: 'Montserrat', sans-serif;
         }
+
+        .coming-soon-message {
+            margin: 2rem 0;
+            font-family: 'Montserrat', sans-serif;
+            color: #666;
+            line-height: 1.6;
+        }
+        
+        .coming-soon-message p {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .email-signup {
+            margin: 2rem 0;
+            padding: 2rem;
+            background: #f8f8f8;
+            border-radius: 8px;
+            text-align: left;
+        }
+
+        .email-signup h3 {
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .email-form {
+            display: flex;
+            gap: 1rem;
+            max-width: 500px;
+        }
+
+        .email-input {
+            flex: 1;
+            padding: 0.8rem 1rem;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+
+        .email-input:focus {
+            outline: none;
+            border-color: #1a1a1a;
+        }
+
+        .signup-btn {
+            padding: 0.8rem 1.5rem;
+            background: #1a1a1a;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .signup-btn:hover {
+            background: #333;
+            transform: translateY(-2px);
+        }
+
+        .signup-success {
+            display: none;
+            padding: 1rem;
+            background: #4CAF50;
+            color: white;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        .signup-error {
+            display: none;
+            padding: 1rem;
+            background: #f44336;
+            color: white;
+            border-radius: 4px;
+            margin-top: 1rem;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .email-form {
+                flex-direction: column;
+            }
+
+            .signup-btn {
+                width: 100%;
+            }
+        }
+        
+        .preorder-btn.disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none !important;
+            opacity: 0.7;
+        }
+        
+        .preorder-btn.disabled:hover {
+            background-color: #cccccc;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .preorder-btn.disabled::before,
+        .preorder-btn.disabled::after {
+            display: none;
+        }
     </style>
 </head>
 <body>
@@ -65,15 +182,23 @@
         <section class="overview-hero">
             <div class="hero-content">
                 <h1>RDM-7 Dash</h1>
-                <div class="price-tag">
-                    <span class="price-label">Pre-order Sale</span>
-                    <span class="price"><span class="original-price">$799</span> $699</span>
-                    <span class="shipping-info">Free Postage Australia Wide on orders over $400</span>
+                <div class="coming-soon-message">
+                    <p>Hey, you're early! Thanks for finding us.</p>
+                    <p>Pre-orders will be launching in April 2024. Come back soon to be one of the first to secure your RDM-7 Dash!</p>
+                    <div class="email-signup">
+                        <h3>Want to know when pre-orders go live?</h3>
+                        <form class="email-form" id="preorderNotification">
+                            <input type="email" class="email-input" name="emailAddress" placeholder="Enter your email address" required>
+                            <button type="submit" class="signup-btn">Notify Me</button>
+                        </form>
+                        <div class="signup-success">Thanks! You're on the list!</div>
+                        <div class="signup-error">Oops! Something went wrong. Please try again later.</div>
+                    </div>
                 </div>
-                <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
+                <button class="preorder-btn disabled" disabled>Coming Soon</button>
             </div>
             <div class="hero-image">
-                <img src="rdm-7-dash.jpg" alt="RDM-7 Digital Dashboard">
+                <img src="print-display.png" alt="RDM-7 Digital Dashboard">
             </div>
         </section>
 
@@ -95,16 +220,16 @@
             </div>
             <div class="feature-card">
                 <i class="fas fa-sliders-h"></i>
-                <h3>Customizable Layout</h3>
-                <p>Personalize your dashboard with drop-down selection of pre-configured parameters and warning thresholds for selected ECUs. If not, create your own.</p>
+                <h3>Customizable Parameters</h3>
+                <p>Personalize your dashboard with drop-down selection of pre-configured parameters and warning thresholds for selected ECUs. Or, create your own.</p>
             </div>
         </section>
 
         <section class="cta-section">
             <div class="cta-content">
-                <h2>Ready to Transform Your Dash?</h2>
-                <p>Pre-order now and be among the first to experience the power of real-time data monitoring.</p>
-                <a href="#pre-order" class="preorder-btn">PRE-ORDER NOW</a>
+                <h2>Coming in April 2024</h2>
+                <p>Be ready to join us on launch day and transform your dash with real-time data monitoring.</p>
+                <button class="preorder-btn disabled" disabled>Coming Soon</button>
             </div>
         </section>
     </main>
@@ -117,7 +242,7 @@
             <div class="footer-section">
                 <h3>Socials</h3>
                 <div class="social-icons">
-                    <a href="#" class="social-icon"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.instagram.com/realtimedatamonitoring/" class="social-icon" target="_blank"><i class="fab fa-instagram"></i></a>
                     <a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a>
                     <a href="#" class="social-icon"><i class="fab fa-youtube"></i></a>
                 </div>
@@ -141,6 +266,103 @@
         </div>
     </footer>
 
-    <script src="script.js"></script>
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
+    <script>
+        // Your Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyB-KmHI5NtZzBBf-TYyz11A5j_qXRhWcf0",
+            authDomain: "rdm-preorders.firebaseapp.com",
+            projectId: "rdm-preorders",
+            storageBucket: "rdm-preorders.firebasestorage.app",
+            messagingSenderId: "271126703894",
+            appId: "1:271126703894:web:0c1199e44abf68605aaa37",
+            measurementId: "G-5346YR0V86",
+            databaseURL: "https://rdm-preorders-default-rtdb.firebaseio.com" // Added databaseURL for Realtime Database
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Handle loading overlay
+        window.addEventListener('load', function() {
+            const loadingOverlay = document.querySelector('.loading-overlay');
+            loadingOverlay.classList.add('fade-out');
+            setTimeout(() => {
+                loadingOverlay.style.display = 'none';
+            }, 500);
+        });
+
+        // Handle email signup form
+        document.getElementById('preorderNotification').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const email = form.querySelector('.email-input').value.toLowerCase();
+            const successMessage = document.querySelector('.signup-success');
+            const errorMessage = document.querySelector('.signup-error');
+            const submitButton = form.querySelector('.signup-btn');
+            
+            // Show loading state
+            submitButton.disabled = true;
+            submitButton.textContent = 'Signing up...';
+            
+            // Check for duplicate email
+            firebase.database().ref('preorder-emails').orderByChild('email').equalTo(email).once('value')
+                .then((snapshot) => {
+                    if (snapshot.exists()) {
+                        throw new Error('duplicate_email');
+                    }
+                    
+                    // Save email to Firebase if not duplicate
+                    return firebase.database().ref('preorder-emails').push({
+                        email: email,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    });
+                })
+                .then(() => {
+                    console.log('Email saved successfully');
+                    // Show success message
+                    successMessage.style.display = 'block';
+                    errorMessage.style.display = 'none';
+                    form.reset();
+                    
+                    // Hide success message after 5 seconds
+                    setTimeout(() => {
+                        successMessage.style.display = 'none';
+                    }, 5000);
+                })
+                .catch((error) => {
+                    // Show appropriate error message
+                    console.error('Detailed error:', error);
+                    errorMessage.style.display = 'block';
+                    successMessage.style.display = 'none';
+                    
+                    if (error.message === 'duplicate_email') {
+                        errorMessage.textContent = 'This email is already registered for notifications.';
+                    } else if (error.code === 'PERMISSION_DENIED') {
+                        errorMessage.textContent = 'Unable to save email due to permission settings. Please try again later.';
+                    } else {
+                        errorMessage.textContent = `Error: ${error.message || 'Something went wrong. Please try again later.'}`;
+                    }
+                })
+                .finally(() => {
+                    // Reset button state
+                    submitButton.disabled = false;
+                    submitButton.textContent = 'Notify Me';
+                });
+        });
+
+        // Handle mobile menu
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        const nav = document.querySelector('nav');
+        
+        hamburgerMenu.addEventListener('click', function() {
+            this.classList.toggle('active');
+            nav.classList.toggle('active');
+        });
+    </script>
 </body>
 </html> 
