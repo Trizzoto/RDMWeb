@@ -76,15 +76,14 @@ function init() {
         controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.enableZoom = false;               // Disable zoom on mobile
         controls.enablePan = false;                // Disable panning
-        controls.rotateSpeed = 1.0;                // Increased rotation speed for smoother movement
+        controls.rotateSpeed = 2.0;                // Increased for more responsive touch rotation
         controls.enableRotate = false;             // Disable manual rotation by default
-        controls.dampingFactor = 0.1;              // Increased damping for smoother deceleration
+        controls.dampingFactor = 0.05;             // Reduced for smoother rotation
         controls.touches = {
             ONE: THREE.TOUCH.ROTATE,
-            TWO: THREE.TOUCH.NONE                  // Initially disable two-finger touch
+            TWO: THREE.TOUCH.NONE
         };
         controls.enableDamping = true;             // Enable damping for smoother movement
-        controls.rotateSpeed = 1.0;                // Base rotation speed
 
         // Add 360° toggle functionality
         const rotateToggle = document.querySelector('.rotate-toggle');
@@ -93,85 +92,53 @@ function init() {
                 const isActive = rotateToggle.classList.toggle('active');
                 if (isActive) {
                     // Enable full rotation and zoom
+                    controls.enabled = true;        // Enable all controls
                     controls.enableRotate = true;   // Enable manual rotation
                     controls.enableZoom = true;     // Enable zoom in 360° mode
-                    controls.minDistance = 100;     // Set minimum zoom distance
-                    controls.maxDistance = 500;     // Set maximum zoom distance
-                    controls.touches = {            // Enable both rotation and pinch zoom
+                    controls.minDistance = 100;
+                    controls.maxDistance = 500;
+                    controls.touches = {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.DOLLY_PAN
                     };
-                    controls.minPolarAngle = 0;
+                    controls.minPolarAngle = 0;     // Allow full vertical rotation
                     controls.maxPolarAngle = Math.PI;
-                    controls.dampingFactor = 0.1;   // Smooth damping
-                    controls.rotateSpeed = 1.0;     // Adjusted rotate speed
-                    controls.enableDamping = true;  // Enable damping
+                    controls.rotateSpeed = 2.0;     // Increased for better touch response
+                    controls.dampingFactor = 0.05;  // Reduced for smoother movement
+                    controls.autoRotate = false;    // Disable auto-rotation in 360 mode
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
-                    // Disable manual rotation and zoom
+                    // Return to default view
+                    controls.enabled = true;        // Keep enabled for auto-rotation
                     controls.enableRotate = false;  // Disable manual rotation
                     controls.enableZoom = false;    // Disable zoom
-                    controls.touches = {            // Disable all touch gestures
+                    controls.touches = {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.NONE
                     };
                     controls.minPolarAngle = Math.PI / 2.2;
                     controls.maxPolarAngle = Math.PI / 2.2;
+                    controls.autoRotate = true;     // Re-enable auto-rotation
+                    controls.autoRotateSpeed = 1.2;
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
                 }
                 controls.update();
             });
         }
-        
-        // Simplified touch event handling for better performance
-        let touchStartTime = 0;
-        let touchStartX = 0;
-        let touchStartY = 0;
-        const touchThreshold = 5; // Reduced threshold for more responsive touch
 
+        // Simplified touch handling
         modelContainer.addEventListener('touchstart', (e) => {
             if (!controls.enableRotate) return;
-            
-            touchStartTime = Date.now();
-            touchStartX = e.touches[0].clientX;
-            touchStartY = e.touches[0].clientY;
-            
-        }, { passive: true });
+            e.preventDefault(); // Prevent default touch behavior when rotation is enabled
+        }, { passive: false });
 
         modelContainer.addEventListener('touchmove', (e) => {
             if (!controls.enableRotate) return;
-            
-            const deltaX = e.touches[0].clientX - touchStartX;
-            const deltaY = e.touches[0].clientY - touchStartY;
-            
-            // Only handle rotation if movement is significant
-            if (Math.abs(deltaX) > touchThreshold || Math.abs(deltaY) > touchThreshold) {
-                // Determine if movement is more horizontal or vertical
-                if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
-                    controls.enableRotate = false;
-                    setTimeout(() => {
-                        if (document.querySelector('.rotate-toggle.active')) {
-                            controls.enableRotate = true;
-                        }
-                    }, 100);
-                }
-            }
-        }, { passive: true });
+            e.preventDefault(); // Prevent default touch behavior when rotation is enabled
+        }, { passive: false });
 
-        modelContainer.addEventListener('touchend', () => {
-            if (!controls.enableRotate) return;
-            
-            const touchDuration = Date.now() - touchStartTime;
-            if (touchDuration < 100) { // Quick touch
-                controls.autoRotateSpeed *= 1.5; // Temporarily increase rotation speed
-                setTimeout(() => {
-                    controls.autoRotateSpeed = 1.2; // Reset to normal speed
-                }, 1000);
-            }
-        }, { passive: true });
-
-        // Adjust camera and controls for mobile
-        camera.position.multiplyScalar(1.2);
+        // Adjust camera position for better mobile view
+        camera.position.multiplyScalar(1.4);  // Move camera back slightly more
         controls.update();
     } else {
         // Desktop settings - allow full rotation
