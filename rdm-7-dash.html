@@ -169,6 +169,38 @@
                 max-height: 300px;
             }
         }
+
+        .mobile-title {
+            display: none;
+        }
+
+        .desktop-only {
+            display: block;
+        }
+
+        @media (max-width: 768px) {
+            .desktop-title {
+                display: none;
+            }
+
+            .mobile-title {
+                display: block;
+                margin-top: 2rem;
+                text-align: center;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+
+            .hero-content {
+                padding: 1rem;
+            }
+
+            .email-signup {
+                margin: 1.5rem 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -202,7 +234,7 @@
     <main class="product-overview">
         <section class="overview-hero">
             <div class="hero-content">
-                <h1>RDM-7 Dash</h1>
+                <h1 class="desktop-title">RDM-7 Dash</h1>
                 <div class="coming-soon-message">
                     <p>Hey, you're early! Thanks for finding us.</p>
                     <p>Pre-orders will be launching in April 2024. Come back soon to be one of the first to secure your RDM-7 Dash!</p>
@@ -216,7 +248,8 @@
                         <div class="signup-error">Oops! Something went wrong. Please try again later.</div>
                     </div>
                 </div>
-                <button class="preorder-btn disabled" disabled>Coming Soon</button>
+                <h1 class="mobile-title">RDM-7 Dash</h1>
+                <button class="preorder-btn disabled desktop-only" disabled>Coming Soon</button>
             </div>
             <div class="hero-image">
                 <picture>
