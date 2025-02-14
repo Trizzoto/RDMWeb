@@ -100,17 +100,22 @@ function init() {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.DOLLY_PAN
                     };
-                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
-
-                    // Remove any existing event listeners
+                    
+                    // Remove scroll handling
+                    isScrollEnabled = false;
+                    modelContainer.style.pointerEvents = 'auto';
+                    
+                    // Remove all touch event listeners
                     modelContainer.removeEventListener('touchstart', handleTouchStart);
                     modelContainer.removeEventListener('touchmove', handleTouchMove);
                     modelContainer.removeEventListener('touchend', handleTouchEnd);
                     renderer.domElement.removeEventListener('touchmove', preventScroll);
-
+                    
+                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
                     // Disable 360° mode
                     controls.autoRotate = true;            // Re-enable auto-rotation
+                    controls.enabled = true;               // Keep enabled for auto-rotation
                     controls.enableRotate = false;         // Disable manual rotation
                     controls.enableZoom = false;           // Disable zoom
                     controls.minPolarAngle = Math.PI / 2.2;// Reset vertical lock
@@ -119,60 +124,58 @@ function init() {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.NONE
                     };
-                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
-
-                    // Re-add event listeners for normal mode
+                    
+                    // Re-enable scroll handling
+                    isScrollEnabled = true;
+                    modelContainer.style.pointerEvents = 'none';
+                    
+                    // Re-add touch event listeners for scroll handling
                     modelContainer.addEventListener('touchstart', handleTouchStart);
                     modelContainer.addEventListener('touchmove', handleTouchMove);
                     modelContainer.addEventListener('touchend', handleTouchEnd);
                     renderer.domElement.addEventListener('touchmove', preventScroll);
+                    
+                    rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
                 }
                 
                 controls.update();
             });
         }
 
+        // Initialize scroll handling state
+        let isScrollEnabled = true;
+        modelContainer.style.pointerEvents = 'none';
+
         // Define event handlers
         const handleTouchStart = (e) => {
-            if (!controls.enableRotate) return;
-            touchStartX = e.touches[0].clientX;
+            if (!isScrollEnabled) return;
             touchStartY = e.touches[0].clientY;
-            isScrolling = false;
         };
 
         const handleTouchMove = (e) => {
-            if (!controls.enableRotate) return;
-            
-            const touchX = e.touches[0].clientX;
+            if (!isScrollEnabled) return;
             const touchY = e.touches[0].clientY;
-            const deltaX = touchX - touchStartX;
             const deltaY = touchY - touchStartY;
-
-            if (!isScrolling && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
-                isScrolling = true;
-                controls.enabled = false;
-            }
+            
+            // Allow page scrolling
+            window.scrollBy(0, -deltaY);
+            touchStartY = touchY;
         };
 
         const handleTouchEnd = () => {
-            if (controls.enableRotate) {
-                isScrolling = false;
-                controls.enabled = true;
-            }
+            if (!isScrollEnabled) return;
         };
 
         const preventScroll = (e) => {
-            if (controls.enableRotate && !isScrolling) {
+            if (!isScrollEnabled) {
                 e.preventDefault();
             }
         };
 
         // Initialize touch handling variables
-        let touchStartX = 0;
         let touchStartY = 0;
-        let isScrolling = false;
 
-        // Add initial event listeners
+        // Add initial event listeners for scroll handling
         modelContainer.addEventListener('touchstart', handleTouchStart);
         modelContainer.addEventListener('touchmove', handleTouchMove);
         modelContainer.addEventListener('touchend', handleTouchEnd);
