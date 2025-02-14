@@ -70,6 +70,37 @@ function init() {
     // Check if on mobile device
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
+    // Add wheel event handler for page scrolling
+    const handleScroll = (event) => {
+        if (isMobile) {
+            if (!controls.enableRotate) {  // Only handle scroll when not in 360° mode
+                event.preventDefault();
+                window.scrollBy({
+                    top: event.deltaY,
+                    behavior: 'auto'  // Changed to auto for more responsive scrolling
+                });
+            }
+        } else {  // Desktop behavior
+            const distance = camera.position.distanceTo(controls.target);
+            const isAtTop = window.scrollY === 0;
+            
+            if (!isAtTop || distance >= controls.maxDistance * 0.95) {
+                event.stopPropagation();
+                window.scrollBy({
+                    top: event.deltaY,
+                    behavior: 'auto'  // Changed to auto for more responsive scrolling
+                });
+                controls.enableZoom = false;
+            } else {
+                controls.enableZoom = true;
+            }
+        }
+    };
+
+    // Add the scroll handler to both renderer and model container
+    renderer.domElement.addEventListener('wheel', handleScroll, { passive: false });
+    modelContainer.addEventListener('wheel', handleScroll, { passive: false });
+
     if (isMobile) {
         // Initial mobile settings
         controls.enabled = true;                  // Keep controls enabled for auto-rotation
@@ -101,15 +132,16 @@ function init() {
                         TWO: THREE.TOUCH.DOLLY_PAN
                     };
                     
-                    // Remove scroll handling
-                    isScrollEnabled = false;
+                    // Enable touch interactions
                     modelContainer.style.pointerEvents = 'auto';
+                    renderer.domElement.style.touchAction = 'none';  // Prevent default touch actions
+                    document.body.style.overflow = 'hidden';  // Prevent background scrolling in 360 mode
                     
-                    // Remove all touch event listeners
-                    modelContainer.removeEventListener('touchstart', handleTouchStart);
-                    modelContainer.removeEventListener('touchmove', handleTouchMove);
-                    modelContainer.removeEventListener('touchend', handleTouchEnd);
-                    renderer.domElement.removeEventListener('touchmove', preventScroll);
+                    // Prevent touch events from propagating to parent elements
+                    modelContainer.addEventListener('touchmove', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, { passive: false });
                     
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
@@ -125,15 +157,16 @@ function init() {
                         TWO: THREE.TOUCH.NONE
                     };
                     
-                    // Re-enable scroll handling
-                    isScrollEnabled = true;
+                    // Reset touch interactions
                     modelContainer.style.pointerEvents = 'none';
+                    renderer.domElement.style.touchAction = '';
+                    document.body.style.overflow = '';     // Restore normal scrolling
                     
-                    // Re-add touch event listeners for scroll handling
-                    modelContainer.addEventListener('touchstart', handleTouchStart);
-                    modelContainer.addEventListener('touchmove', handleTouchMove);
-                    modelContainer.addEventListener('touchend', handleTouchEnd);
-                    renderer.domElement.addEventListener('touchmove', preventScroll);
+                    // Remove touch event listener
+                    modelContainer.removeEventListener('touchmove', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                    }, { passive: false });
                     
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
                 }
@@ -142,44 +175,8 @@ function init() {
             });
         }
 
-        // Initialize scroll handling state
-        let isScrollEnabled = true;
+        // Set initial pointer events
         modelContainer.style.pointerEvents = 'none';
-
-        // Define event handlers
-        const handleTouchStart = (e) => {
-            if (!isScrollEnabled) return;
-            touchStartY = e.touches[0].clientY;
-        };
-
-        const handleTouchMove = (e) => {
-            if (!isScrollEnabled) return;
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchY - touchStartY;
-            
-            // Allow page scrolling
-            window.scrollBy(0, -deltaY);
-            touchStartY = touchY;
-        };
-
-        const handleTouchEnd = () => {
-            if (!isScrollEnabled) return;
-        };
-
-        const preventScroll = (e) => {
-            if (!isScrollEnabled) {
-                e.preventDefault();
-            }
-        };
-
-        // Initialize touch handling variables
-        let touchStartY = 0;
-
-        // Add initial event listeners for scroll handling
-        modelContainer.addEventListener('touchstart', handleTouchStart);
-        modelContainer.addEventListener('touchmove', handleTouchMove);
-        modelContainer.addEventListener('touchend', handleTouchEnd);
-        renderer.domElement.addEventListener('touchmove', preventScroll, { passive: false });
 
         // Adjust camera position for mobile
         camera.position.multiplyScalar(1.4);
@@ -190,30 +187,6 @@ function init() {
         controls.maxPolarAngle = Math.PI;         // Allow full vertical rotation
         controls.enableZoom = true;               // Allow zoom on desktop
     }
-    
-    // Add wheel event handler for page scrolling when zoomed out or not at top
-    renderer.domElement.addEventListener('wheel', (event) => {
-        if (!isMobile) {  // Only for desktop
-            const distance = camera.position.distanceTo(controls.target);
-            const isAtTop = window.scrollY === 0;
-            
-            // If not at top of page, always allow page scrolling
-            if (!isAtTop) {
-                event.stopPropagation();
-                window.scrollBy(0, event.deltaY);
-                controls.enableZoom = false;
-                return;
-            }
-            
-            // At top of page
-            if (distance >= controls.maxDistance * 0.95) {  // When nearly or fully zoomed out
-                event.stopPropagation();
-                window.scrollBy(0, event.deltaY);
-            } else {
-                controls.enableZoom = true;  // Allow zooming when at top and not fully zoomed out
-            }
-        }
-    }, { passive: true });
 
     // Re-enable zoom when scrolling back to top
     window.addEventListener('scroll', () => {
@@ -285,10 +258,10 @@ function init() {
                     texture.generateMipmaps = false;  // Disable mipmaps for mobile
                 } else {
                     // Desktop texture settings
-                    texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+                texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
                     texture.minFilter = THREE.LinearMipMapLinearFilter;
                     texture.magFilter = THREE.LinearFilter;
-                    texture.generateMipmaps = true;
+                texture.generateMipmaps = true;
                 }
                 
                 texture.needsUpdate = true;
