@@ -76,12 +76,15 @@ function init() {
         controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
         controls.enableZoom = false;               // Disable zoom on mobile
         controls.enablePan = false;                // Disable panning
-        controls.rotateSpeed = 0.5;                // Reduce rotation speed on mobile
+        controls.rotateSpeed = 1.0;                // Increased rotation speed for smoother movement
         controls.enableRotate = false;             // Disable manual rotation by default
+        controls.dampingFactor = 0.1;              // Increased damping for smoother deceleration
         controls.touches = {
             ONE: THREE.TOUCH.ROTATE,
             TWO: THREE.TOUCH.NONE                  // Initially disable two-finger touch
         };
+        controls.enableDamping = true;             // Enable damping for smoother movement
+        controls.rotateSpeed = 1.0;                // Base rotation speed
 
         // Add 360° toggle functionality
         const rotateToggle = document.querySelector('.rotate-toggle');
@@ -100,8 +103,9 @@ function init() {
                     };
                     controls.minPolarAngle = 0;
                     controls.maxPolarAngle = Math.PI;
-                    controls.dampingFactor = 0.05;  // Smooth damping
-                    controls.rotateSpeed = 0.5;     // Adjusted rotate speed
+                    controls.dampingFactor = 0.1;   // Smooth damping
+                    controls.rotateSpeed = 1.0;     // Adjusted rotate speed
+                    controls.enableDamping = true;  // Enable damping
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
                     // Disable manual rotation and zoom
@@ -119,57 +123,50 @@ function init() {
             });
         }
         
-        // Add touch event handler for better scroll behavior
+        // Simplified touch event handling for better performance
+        let touchStartTime = 0;
+        let touchStartX = 0;
         let touchStartY = 0;
-        let isTouching = false;
-        let touchTimeout;
-        let lastTouchTime = 0;
-        const touchThreshold = 100; // Minimum time between touch events in ms
+        const touchThreshold = 5; // Reduced threshold for more responsive touch
 
         modelContainer.addEventListener('touchstart', (e) => {
-            const currentTime = Date.now();
-            if (currentTime - lastTouchTime < touchThreshold) return;
-            lastTouchTime = currentTime;
-
-            touchStartY = e.touches[0].clientY;
-            isTouching = true;
+            if (!controls.enableRotate) return;
             
-            if (controls.enableRotate) {
-                // Only handle touch events when manual rotation is enabled
-                clearTimeout(touchTimeout);
-                touchTimeout = setTimeout(() => {
-                    isTouching = false;
-                }, 100);
-            }
+            touchStartTime = Date.now();
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            
         }, { passive: true });
 
         modelContainer.addEventListener('touchmove', (e) => {
-            if (!isTouching || !controls.enableRotate) return;
+            if (!controls.enableRotate) return;
             
-            const touchY = e.touches[0].clientY;
-            const deltaY = touchY - touchStartY;
+            const deltaX = e.touches[0].clientX - touchStartX;
+            const deltaY = e.touches[0].clientY - touchStartY;
             
-            // If vertical scroll is detected (with some threshold)
-            if (Math.abs(deltaY) > 10) {
-                controls.enableRotate = false;  // Temporarily disable manual rotation
-                // Re-enable after a short delay only if 360° view is active
-                clearTimeout(touchTimeout);
-                touchTimeout = setTimeout(() => {
-                    if (document.querySelector('.rotate-toggle.active')) {
-                        controls.enableRotate = true;
-                    }
-                }, 300);
+            // Only handle rotation if movement is significant
+            if (Math.abs(deltaX) > touchThreshold || Math.abs(deltaY) > touchThreshold) {
+                // Determine if movement is more horizontal or vertical
+                if (Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+                    controls.enableRotate = false;
+                    setTimeout(() => {
+                        if (document.querySelector('.rotate-toggle.active')) {
+                            controls.enableRotate = true;
+                        }
+                    }, 100);
+                }
             }
         }, { passive: true });
 
         modelContainer.addEventListener('touchend', () => {
-            isTouching = false;
-            clearTimeout(touchTimeout);
-            // Only re-enable if 360° view is active
-            if (document.querySelector('.rotate-toggle.active')) {
-                touchTimeout = setTimeout(() => {
-                    controls.enableRotate = true;
-                }, 100);
+            if (!controls.enableRotate) return;
+            
+            const touchDuration = Date.now() - touchStartTime;
+            if (touchDuration < 100) { // Quick touch
+                controls.autoRotateSpeed *= 1.5; // Temporarily increase rotation speed
+                setTimeout(() => {
+                    controls.autoRotateSpeed = 1.2; // Reset to normal speed
+                }, 1000);
             }
         }, { passive: true });
 
