@@ -2520,6 +2520,35 @@ footer {
     .social-icons {
         gap: 1.2rem;
     }
+
+    .footer-content {
+        text-align: center;
+        flex-direction: column;
+        gap: 30px;
+    }
+
+    .footer-section {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .footer-section h3 {
+        margin-bottom: 15px;
+    }
+
+    .social-links {
+        justify-content: center;
+    }
+
+    .footer-section a {
+        display: block;
+        margin: 8px 0;
+    }
+
+    .footer-bottom {
+        text-align: center;
+    }
 }
 
 .product-showcase {
