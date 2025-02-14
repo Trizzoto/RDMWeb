@@ -873,7 +873,6 @@ const initCarousel = () => {
             ? (currentSlide + 1) % totalSlides 
             : (currentSlide - 1 + totalSlides) % totalSlides;
 
-        // Position slides for transition
         slides.forEach((slide, index) => {
             // Reset all slides first
             slide.style.visibility = 'hidden';
@@ -889,9 +888,9 @@ const initCarousel = () => {
                 slide.classList.add('active');
                 slide.style.transform = 'translateX(0)';
                 
-                // Enable 3D controls if it's the model
-                if (slide.id === 'model-container' && controls) {
-                    controls.enabled = true;
+                // Handle model interaction when switching slides
+                if (slide.id === 'model-container') {
+                    updateModelInteraction(index === nextIndex);  // Enable only when active
                 }
             } else {
                 // Hide other slides
@@ -956,7 +955,7 @@ const initCarousel = () => {
 
     // Initialize the carousel
     initializeSlides();
-};
+}
 
 // Hamburger menu functionality
 document.addEventListener('DOMContentLoaded', () => {
@@ -981,3 +980,21 @@ document.addEventListener('DOMContentLoaded', () => {
 window.onbeforeunload = function () {
     window.scrollTo(0, 0);
 }
+
+// Disable/enable 3D controls based on mobile and 360 view state
+function updateModelInteraction(isEnabled) {
+    if (window.innerWidth <= 768) {  // Mobile check
+        if (controls) {
+            controls.enabled = isEnabled;  // Only enable when 360 view is active
+        }
+        
+        // Disable all touch events on model container when not in 360 view
+        const modelContainer = document.getElementById('model-container');
+        if (modelContainer) {
+            modelContainer.style.pointerEvents = isEnabled ? 'auto' : 'none';
+        }
+    }
+}
+
+// Initial setup
+updateModelInteraction(false);  // Start with model interaction disabled
