@@ -84,22 +84,26 @@ function init() {
             const distance = camera.position.distanceTo(controls.target);
             const isAtTop = window.scrollY === 0;
             
-            if (!isAtTop || distance >= controls.maxDistance * 0.95) {
-                event.stopPropagation();
-                window.scrollBy({
-                    top: event.deltaY,
-                    behavior: 'auto'  // Changed to auto for more responsive scrolling
-                });
-                controls.enableZoom = false;
-            } else {
-                controls.enableZoom = true;
+            // Only interfere with scroll if we're at the top and zooming
+            if (isAtTop && distance < controls.maxDistance * 0.95 && controls.enableZoom) {
+                // Let the zoom happen naturally
+                return;
             }
+            
+            // Otherwise, handle normal scrolling
+            window.scrollBy({
+                top: event.deltaY,
+                behavior: 'auto'
+            });
+            
+            // Disable zoom when scrolling down
+            controls.enableZoom = isAtTop;
         }
     };
 
-    // Add the scroll handler to both renderer and model container
-    renderer.domElement.addEventListener('wheel', handleScroll, { passive: false });
-    modelContainer.addEventListener('wheel', handleScroll, { passive: false });
+    // Add the scroll handler with passive true for better performance
+    renderer.domElement.addEventListener('wheel', handleScroll, { passive: true });
+    modelContainer.addEventListener('wheel', handleScroll, { passive: true });
 
     if (isMobile) {
         // Initial mobile settings
@@ -484,28 +488,33 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// Header scroll behavior
+// Header scroll behavior - optimize with throttle
 let lastScrollTop = 0;
 const header = document.querySelector('header');
-const scrollThreshold = 50; // minimum scroll amount before hiding/showing header
+const scrollThreshold = 50;
+let ticking = false;
 
 window.addEventListener('scroll', () => {
-    const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
-    
-    // Determine scroll direction and distance
-    if (Math.abs(lastScrollTop - currentScroll) <= scrollThreshold) return;
-    
-    // Scrolling down & past the threshold
-    if (currentScroll > lastScrollTop && currentScroll > header.offsetHeight) {
-        header.classList.add('header-hidden');
-    } 
-    // Scrolling up
-    else {
-        header.classList.remove('header-hidden');
+    if (!ticking) {
+        window.requestAnimationFrame(() => {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // Only process if we've scrolled more than the threshold
+            if (Math.abs(lastScrollTop - currentScroll) > scrollThreshold) {
+                if (currentScroll > lastScrollTop && currentScroll > header.offsetHeight) {
+                    header.classList.add('header-hidden');
+                } else {
+                    header.classList.remove('header-hidden');
+                }
+                lastScrollTop = currentScroll;
+            }
+            
+            ticking = false;
+        });
+        
+        ticking = true;
     }
-    
-    lastScrollTop = currentScroll;
-});
+}, { passive: true });
 
 // Scroll animations for Why Choose RDM section
 const observerOptions = {
