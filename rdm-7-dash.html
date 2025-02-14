@@ -178,6 +178,10 @@
             display: block;
         }
 
+        .mobile-only {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .desktop-title {
                 display: none;
@@ -185,20 +189,59 @@
 
             .mobile-title {
                 display: block;
-                margin-top: 2rem;
+                margin: 1rem 0;
                 text-align: center;
+                font-size: 2.2rem;
             }
 
             .desktop-only {
                 display: none;
             }
 
+            .mobile-only {
+                display: block;
+                width: 100%;
+                margin: 1rem 0;
+            }
+
             .hero-content {
                 padding: 1rem;
+                display: flex;
+                flex-direction: column;
+            }
+
+            .coming-soon-message {
+                margin: 1rem 0;
+            }
+
+            .coming-soon-message p {
+                font-size: 1rem;
+                margin-bottom: 0.5rem;
+                line-height: 1.4;
             }
 
             .email-signup {
-                margin: 1.5rem 0;
+                margin: 1rem 0;
+                padding: 1rem;
+            }
+
+            .email-signup h3 {
+                font-size: 1.1rem;
+                margin-bottom: 0.8rem;
+            }
+
+            .hero-image {
+                order: 2;
+                margin: 0.5rem 0;
+            }
+
+            .overview-hero {
+                padding: 1rem;
+                gap: 1rem;
+            }
+
+            .signup-btn {
+                margin-top: 0.5rem;
             }
         }
     </style>
@@ -248,7 +291,6 @@
                         <div class="signup-error">Oops! Something went wrong. Please try again later.</div>
                     </div>
                 </div>
-                <h1 class="mobile-title">RDM-7 Dash</h1>
                 <button class="preorder-btn disabled desktop-only" disabled>Coming Soon</button>
             </div>
             <div class="hero-image">
@@ -257,6 +299,7 @@
                     <img src="print-display.png" alt="RDM-7 Digital Dashboard">
                 </picture>
             </div>
+            <button class="preorder-btn disabled mobile-only" disabled>Coming Soon</button>
         </section>
 
         <section class="features-grid">

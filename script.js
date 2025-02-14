@@ -71,74 +71,102 @@ function init() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-        // Lock vertical rotation on mobile by default
-        controls.minPolarAngle = Math.PI / 2.2;    // Lock to bottom position
-        controls.maxPolarAngle = Math.PI / 2.2;    // Lock to bottom position
-        controls.enableZoom = false;               // Disable zoom on mobile
-        controls.enablePan = false;                // Disable panning
-        controls.rotateSpeed = 2.0;                // Increased for more responsive touch rotation
-        controls.enableRotate = false;             // Disable manual rotation by default
-        controls.dampingFactor = 0.05;             // Reduced for smoother rotation
+        // Initial mobile settings
+        controls.enabled = true;                  // Keep controls enabled for auto-rotation
+        controls.enableRotate = false;            // Initially disable manual rotation
+        controls.enableZoom = false;              // Initially disable zoom
+        controls.enablePan = false;               // Disable panning
+        controls.rotateSpeed = 1.5;               // Adjust rotation speed for mobile
+        controls.minPolarAngle = Math.PI / 2.2;   // Lock to bottom position initially
+        controls.maxPolarAngle = Math.PI / 2.2;   // Lock to bottom position initially
+        controls.dampingFactor = 0.07;            // Smooth damping
         controls.touches = {
             ONE: THREE.TOUCH.ROTATE,
-            TWO: THREE.TOUCH.NONE
+            TWO: THREE.TOUCH.DOLLY_PAN
         };
-        controls.enableDamping = true;             // Enable damping for smoother movement
 
         // Add 360° toggle functionality
         const rotateToggle = document.querySelector('.rotate-toggle');
         if (rotateToggle) {
             rotateToggle.addEventListener('click', () => {
                 const isActive = rotateToggle.classList.toggle('active');
+                
                 if (isActive) {
-                    // Enable full rotation and zoom
-                    controls.enabled = true;        // Enable all controls
-                    controls.enableRotate = true;   // Enable manual rotation
-                    controls.enableZoom = true;     // Enable zoom in 360° mode
-                    controls.minDistance = 100;
-                    controls.maxDistance = 500;
+                    // Enable 360° mode
+                    controls.autoRotate = false;           // Disable auto-rotation
+                    controls.enabled = true;               // Enable controls
+                    controls.enableRotate = true;          // Enable rotation
+                    controls.enableZoom = true;            // Enable zoom
+                    controls.minPolarAngle = 0;            // Allow full vertical rotation
+                    controls.maxPolarAngle = Math.PI;      // Allow full vertical rotation
+                    controls.rotateSpeed = 1.5;            // Set rotation speed
                     controls.touches = {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.DOLLY_PAN
                     };
-                    controls.minPolarAngle = 0;     // Allow full vertical rotation
-                    controls.maxPolarAngle = Math.PI;
-                    controls.rotateSpeed = 2.0;     // Increased for better touch response
-                    controls.dampingFactor = 0.05;  // Reduced for smoother movement
-                    controls.autoRotate = false;    // Disable auto-rotation in 360 mode
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> Exit 360°';
                 } else {
-                    // Return to default view
-                    controls.enabled = true;        // Keep enabled for auto-rotation
-                    controls.enableRotate = false;  // Disable manual rotation
-                    controls.enableZoom = false;    // Disable zoom
+                    // Disable 360° mode
+                    controls.autoRotate = true;            // Re-enable auto-rotation
+                    controls.enableRotate = false;         // Disable manual rotation
+                    controls.enableZoom = false;           // Disable zoom
+                    controls.minPolarAngle = Math.PI / 2.2;// Reset vertical lock
+                    controls.maxPolarAngle = Math.PI / 2.2;// Reset vertical lock
                     controls.touches = {
                         ONE: THREE.TOUCH.ROTATE,
                         TWO: THREE.TOUCH.NONE
                     };
-                    controls.minPolarAngle = Math.PI / 2.2;
-                    controls.maxPolarAngle = Math.PI / 2.2;
-                    controls.autoRotate = true;     // Re-enable auto-rotation
-                    controls.autoRotateSpeed = 1.2;
                     rotateToggle.innerHTML = '<i class="fas fa-cube"></i> 360° View';
                 }
+                
                 controls.update();
             });
         }
 
-        // Simplified touch handling
+        // Handle touch events
+        let touchStartX = 0;
+        let touchStartY = 0;
+        let isScrolling = false;
+
         modelContainer.addEventListener('touchstart', (e) => {
             if (!controls.enableRotate) return;
-            e.preventDefault(); // Prevent default touch behavior when rotation is enabled
-        }, { passive: false });
+            
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+            isScrolling = false;
+        }, { passive: true });
 
         modelContainer.addEventListener('touchmove', (e) => {
             if (!controls.enableRotate) return;
-            e.preventDefault(); // Prevent default touch behavior when rotation is enabled
+            
+            const touchX = e.touches[0].clientX;
+            const touchY = e.touches[0].clientY;
+            const deltaX = touchX - touchStartX;
+            const deltaY = touchY - touchStartY;
+
+            // Determine if user is trying to scroll vertically
+            if (!isScrolling && Math.abs(deltaY) > Math.abs(deltaX) * 1.5) {
+                isScrolling = true;
+                controls.enabled = false;
+            }
+        }, { passive: true });
+
+        modelContainer.addEventListener('touchend', () => {
+            if (controls.enableRotate) {
+                isScrolling = false;
+                controls.enabled = true;
+            }
+        }, { passive: true });
+
+        // Prevent default touch behavior when rotating
+        renderer.domElement.addEventListener('touchmove', (e) => {
+            if (controls.enableRotate && !isScrolling) {
+                e.preventDefault();
+            }
         }, { passive: false });
 
-        // Adjust camera position for better mobile view
-        camera.position.multiplyScalar(1.4);  // Move camera back slightly more
+        // Adjust camera position for mobile
+        camera.position.multiplyScalar(1.4);
         controls.update();
     } else {
         // Desktop settings - allow full rotation
