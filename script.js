@@ -383,13 +383,13 @@ function createModel(geometry, texture) {
         map: texture,
         transparent: textureParams.opacity < 1.0,
         opacity: textureParams.opacity,
-        metalness: 0.3,           // Metallic look
-        roughness: 0.4,           // Surface smoothness
+        metalness: 0.2,           // Reduced metalness to show more color
+        roughness: 0.3,           // Reduced roughness for better color reflection
         envMap: envMap,           // Environment map
-        envMapIntensity: 0.8,     // Reflection intensity
-        clearcoat: 0.3,           // Clear coat layer
+        envMapIntensity: 0.6,     // Reduced to let texture color show through more
+        clearcoat: 0.4,           // Increased for more shine
         clearcoatRoughness: 0.2,  // Clear coat smoothness
-        reflectivity: 1,          // Overall reflectivity
+        reflectivity: 0.8,        // Reduced reflectivity to show more base color
         alphaTest: 0.1,
         precision: 'highp',
         dithering: true,
@@ -481,6 +481,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initSmoothScroll();
     initPageTransitions();
     initCompatibilityChecker();
+    initInstagramFeed();
 });
 
 // Additional check on full page load
@@ -1007,3 +1008,24 @@ function updateModelInteraction(isEnabled) {
 
 // Initial setup
 updateModelInteraction(false);  // Start with model interaction disabled
+
+// Initialize Instagram Feed
+function initInstagramFeed() {
+    const instagramUsername = 'realtimedatamonitoring';
+    const feedContainer = document.querySelector('.instagram-grid');
+    
+    if (!feedContainer) return;
+
+    // Create a container for the Instagram feed
+    const feedScript = document.createElement('script');
+    feedScript.src = 'https://www.instagram.com/embed.js';
+    
+    // Reload Instagram embed after dynamic content is loaded
+    feedScript.onload = function() {
+        if (window.instgrm) {
+            window.instgrm.Embeds.process();
+        }
+    };
+    
+    document.body.appendChild(feedScript);
+}
