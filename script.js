@@ -47,9 +47,20 @@ function init() {
     camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
     camera.lookAt(cameraParams.targetX, cameraParams.targetY, cameraParams.targetZ);
 
-    // Renderer setup
-    renderer = new THREE.WebGLRenderer({ antialias: true });
+    // Enhanced renderer setup for maximum quality
+    renderer = new THREE.WebGLRenderer({ 
+        antialias: true,
+        powerPreference: "high-performance",
+        precision: "highp",
+        alpha: true
+    });
+    renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(window.innerWidth, window.innerHeight);
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.outputEncoding = THREE.sRGBEncoding;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.0;
     
     // Clear any existing content
     while (modelContainer.firstChild) {
@@ -206,34 +217,34 @@ function init() {
     
     // Main front light
     const frontLight = new THREE.DirectionalLight(0xffffff, 1.0);
-    frontLight.position.set(0, 0, 300);
+    frontLight.position.set(0, 150, 300);  // Lowered from 200 to 150
     frontLight.castShadow = true;
     scene.add(frontLight);
 
     // Top-down rim light
     const topLight = new THREE.DirectionalLight(0xffffff, 0.8);
-    topLight.position.set(0, 300, 100);  // Adjusted position for better rim lighting
+    topLight.position.set(0, 400, 100);  // Lowered from 500 to 400
     topLight.lookAt(0, 0, 0);
     scene.add(topLight);
 
     // Subtle fill light from bottom
-    const bottomLight = new THREE.DirectionalLight(0xffffff, 0.3);  // Reduced intensity
-    bottomLight.position.set(0, -200, 100);  // Adjusted position
+    const bottomLight = new THREE.DirectionalLight(0xffffff, 0.3);
+    bottomLight.position.set(0, -250, 100);  // Raised from -300 to -250 for balance
     bottomLight.lookAt(0, 0, 0);
     scene.add(bottomLight);
 
     // Back rim light for edge definition
     const backLight = new THREE.DirectionalLight(0xffffff, 0.5);
-    backLight.position.set(0, 50, -200);  // Adjusted position
+    backLight.position.set(0, 200, -200);  // Lowered from 300 to 200
     scene.add(backLight);
 
     // Side accent lights
     const leftLight = new THREE.DirectionalLight(0xffffff, 0.4);
-    leftLight.position.set(-200, 50, 100);
+    leftLight.position.set(-200, 200, 100);  // Lowered from 300 to 200
     scene.add(leftLight);
 
     const rightLight = new THREE.DirectionalLight(0xffffff, 0.4);
-    rightLight.position.set(200, 50, 100);
+    rightLight.position.set(200, 200, 100);  // Lowered from 300 to 200
     scene.add(rightLight);
 
     // Load texture and model
@@ -247,6 +258,7 @@ function init() {
             const textureFile = isMobile ? 'dashboard-texture-mobile.png' : 'dashboard-texture.png';
             
             textureLoader.load(textureFile, texture => {
+                // Maximum quality texture settings
                 texture.encoding = THREE.sRGBEncoding;
                 texture.flipY = false;
                 texture.rotation = (textureParams.rotation * Math.PI) / 180;
@@ -254,22 +266,21 @@ function init() {
                 texture.repeat.set(textureParams.stretchX, textureParams.stretchY);
                 texture.offset.set(0, 0);
 
-                if (isMobile) {
-                    // Mobile-specific texture settings
-                    texture.minFilter = THREE.LinearFilter;
-                    texture.magFilter = THREE.LinearFilter;
-                    texture.anisotropy = 1;
-                    texture.generateMipmaps = false;  // Disable mipmaps for mobile
-                } else {
-                    // Desktop texture settings
+                // Enhanced quality settings
                 texture.anisotropy = renderer.capabilities.getMaxAnisotropy();
-                    texture.minFilter = THREE.LinearMipMapLinearFilter;
-                    texture.magFilter = THREE.LinearFilter;
+                texture.minFilter = THREE.LinearMipmapLinearFilter;
+                texture.magFilter = THREE.LinearFilter;
                 texture.generateMipmaps = true;
-                }
+                texture.premultiplyAlpha = true;
+                texture.unpackAlignment = 1;
                 
+                // Force high quality
+                texture.format = THREE.RGBAFormat;
+                texture.type = THREE.UnsignedByteType;
                 texture.needsUpdate = true;
                 resolve(texture);
+            }, undefined, function(err) {
+                console.error('Error loading texture:', err);
             });
         }),
         new Promise(resolve => {
@@ -357,16 +368,32 @@ function createModel(geometry, texture) {
     
     geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
     geometry.attributes.uv.needsUpdate = true;
+
+    // Create environment map
+    const cubeTextureLoader = new THREE.CubeTextureLoader();
+    const envMap = cubeTextureLoader.load([
+        'envmap/px.jpg', 'envmap/nx.jpg',
+        'envmap/py.jpg', 'envmap/ny.jpg',
+        'envmap/pz.jpg', 'envmap/nz.jpg'
+    ]);
     
-    const material = new THREE.MeshPhongMaterial({
+    // Create material with enhanced reflection properties
+    const material = new THREE.MeshPhysicalMaterial({
         color: 0xffffff,
         map: texture,
         transparent: textureParams.opacity < 1.0,
         opacity: textureParams.opacity,
-        shininess: 60,           // Controls how shiny the material appears
-        specular: 0x333333,      // Color of the specular highlights
-        reflectivity: 0.5,       // Amount of light reflected
-        alphaTest: 0.1,          // Helps with texture edges
+        metalness: 0.3,           // Metallic look
+        roughness: 0.4,           // Surface smoothness
+        envMap: envMap,           // Environment map
+        envMapIntensity: 0.8,     // Reflection intensity
+        clearcoat: 0.3,           // Clear coat layer
+        clearcoatRoughness: 0.2,  // Clear coat smoothness
+        reflectivity: 1,          // Overall reflectivity
+        alphaTest: 0.1,
+        precision: 'highp',
+        dithering: true,
+        flatShading: false
     });
     
     // Improve geometry quality
@@ -387,7 +414,7 @@ function createModel(geometry, texture) {
     
     // Adjust scale based on device type
     const isMobile = window.innerWidth <= 768;
-    const scale = isMobile ? (110 / maxDim) : (180 / maxDim); // Reduced mobile scale from 135 to 110
+    const scale = isMobile ? (110 / maxDim) : (180 / maxDim);
     model.scale.multiplyScalar(scale);
     
     // Set initial rotation using modelParams
@@ -402,18 +429,10 @@ function createModel(geometry, texture) {
     // Adjust camera position for mobile
     if (isMobile) {
         camera.position.set(
-            cameraParams.posX * 1.4,  // Increased from 1.2 to 1.4 to move camera further back
-            cameraParams.posY * 1.4,  // Increased from 1.2 to 1.4
-            cameraParams.posZ * 1.4   // Increased from 1.2 to 1.4
+            cameraParams.posX * 1.4,
+            cameraParams.posY * 1.4,
+            cameraParams.posZ * 1.4
         );
-        
-        // Adjust texture parameters for mobile
-        if (material.map) {
-            material.map.minFilter = THREE.LinearFilter;  // Use simpler filtering on mobile
-            material.map.magFilter = THREE.LinearFilter;
-            material.map.anisotropy = 1;  // Reduce anisotropic filtering on mobile
-            material.map.needsUpdate = true;
-        }
     } else {
         camera.position.set(cameraParams.posX, cameraParams.posY, cameraParams.posZ);
     }
